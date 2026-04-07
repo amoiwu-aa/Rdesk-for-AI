@@ -1,0 +1,257 @@
+libs\hbb_common\src\platform\windows.rs:41:1: warning: unnecessary `pub(self)`
+libs\hbb_common\src\platform\windows.rs:61:30: warning: constants have by default a `'static` lifetime
+libs\hbb_common\src\lib.rs:124:1: warning: empty line after doc comment
+libs\hbb_common\src\platform\windows.rs:130:29: warning: using `clone` on type `f64` which implements the `Copy` trait: help: try dereferencing it: `*counter_value.u.doubleValue()`
+libs\hbb_common\src\platform\windows.rs:142:13: warning: using `clone` on type `Option<(f64, Instant)>` which implements the `Copy` trait: help: try dereferencing it: `*CPU_USAGE_ONE_MINUTE.lock().unwrap()`
+libs\hbb_common\src\platform\windows.rs:152:13: warning: manual implementation of `Option::map`: help: try: `cpu_usage.map(|cpu_usage| (cpu_usage, Instant::now()))`
+libs\hbb_common\src\proxy.rs:79:6: warning: the following explicit lifetimes could be elided: 'a
+libs\hbb_common\src\proxy.rs:91:6: warning: the following explicit lifetimes could be elided: 'a
+libs\hbb_common\src\proxy.rs:101:6: warning: this lifetime isn't used in the impl
+libs\hbb_common\src\proxy.rs:207:13: warning: unnecessary closure used to substitute value for `Option::None`
+libs\hbb_common\src\proxy.rs:232:52: warning: using `clone` on type `SocketAddr` which implements the `Copy` trait: help: try dereferencing it: `*addr`
+libs\hbb_common\src\proxy.rs:326:9: warning: unneeded `return` statement
+libs\hbb_common\src\proxy.rs:326:16: warning: match expression looks like `matches!` macro: help: try: `!matches!(self.intercept, ProxyScheme::Socks5 { .. })`
+libs\hbb_common\src\proxy.rs:396:9: warning: unneeded `return` statement
+libs\hbb_common\src\proxy.rs:493:17: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `target_addr`
+libs\hbb_common\src\proxy.rs:526:5: warning: this function has too many arguments (9/7)
+libs\hbb_common\src\proxy.rs:551:21: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `url`
+libs\hbb_common\src\proxy.rs:576:25: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `url`
+libs\hbb_common\src\proxy.rs:589:25: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `url`
+libs\hbb_common\src\proxy.rs:592:25: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `target_addr`
+libs\hbb_common\src\proxy.rs:706:5: warning: unneeded `return` statement
+libs\hbb_common\src\tcp.rs:197:9: warning: if let can be simplified with `.unwrap_or_default()`
+libs\hbb_common\src\tcp.rs:318:28: warning: this can be `std::io::Error::other(_)`
+libs\hbb_common\src\tcp.rs:325:25: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `data`
+libs\hbb_common\src\tcp.rs:340:77: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `our_sk_b`
+libs\hbb_common\src\udp.rs:68:32: warning: this lifetime isn't used in the function definition
+libs\hbb_common\src\udp.rs:154:9: warning: if let can be simplified with `.unwrap_or_default()`
+libs\hbb_common\src\config.rs:814:9: warning: unneeded `return` statement
+libs\hbb_common\src\config.rs:1161:17: warning: this `map_or` can be simplified
+libs\hbb_common\src\config.rs:1295:12: warning: needless call to `bytes`: help: `len()` can be called directly on strings: `devices.len()`
+libs\hbb_common\src\config.rs:1296:58: warning: needless call to `bytes`: help: `len()` can be called directly on strings: `devices.len()`
+libs\hbb_common\src\config.rs:1313:42: warning: writing `&Vec` instead of `&[_]` involves a new object where a slice will do: help: change this to: `&[Bytes]`
+libs\hbb_common\src\config.rs:1549:14: warning: writing `&Vec` instead of `&[_]` involves a new object where a slice will do: help: change this to: `&[(String, SystemTime, PathBuf)]`
+libs\hbb_common\src\config.rs:1570:42: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `id`
+libs\hbb_common\src\config.rs:1574:30: warning: using `clone` on type `SystemTime` which implements the `Copy` trait: help: try dereferencing it: `*t`
+libs\hbb_common\src\config.rs:1662:12: warning: manual `RangeInclusive::contains` implementation: help: use: `(10..=1000).contains(&v)`
+libs\hbb_common\src\config.rs:1680:12: warning: manual `RangeInclusive::contains` implementation: help: use: `(20..=150).contains(&v)`
+libs\hbb_common\src\config.rs:2412:12: warning: this `map_or` can be simplified
+libs\hbb_common\src\config.rs:2421:5: warning: this `map_or` can be simplified
+libs\hbb_common\src\config.rs:2430:5: warning: this `map_or` can be simplified
+libs\hbb_common\src\config.rs:2439:5: warning: this `map_or` can be simplified
+libs\hbb_common\src\fs.rs:220:17: warning: you seem to be trying to use `match` for destructuring a single pattern. Consider using `if let`
+libs\hbb_common\src\fs.rs:253:5: warning: unneeded `return` statement
+libs\hbb_common\src\fs.rs:268:1: warning: this `impl` can be derived
+libs\hbb_common\src\fs.rs:293:1: warning: an implementation of `From` is preferred since it gives you `Into<_>` for free where the reverse isn't true
+libs\hbb_common\src\fs.rs:336:81: warning: `to_string` applied to a type that implements `Display` in `write!` args: help: remove this
+libs\hbb_common\src\fs.rs:490:5: warning: this function has too many arguments (8/7)
+libs\hbb_common\src\fs.rs:696:20: warning: writing `&PathBuf` instead of `&Path` involves a new object where a slice will do
+libs\hbb_common\src\fs.rs:794:9: warning: this `if` statement can be collapsed
+libs\hbb_common\src\fs.rs:980:22: warning: file opened with `create`, but `truncate` behavior not defined
+libs\hbb_common\src\fs.rs:1182:26: warning: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do: help: change this to: `&mut [TransferJob]`
+libs\hbb_common\src\fs.rs:1280:33: warning: the borrowed expression implements the required traits: help: change this to: `new_name`
+libs\hbb_common\src\fs.rs:1281:25: warning: the borrowed expression implements the required traits: help: change this to: `path`
+libs\hbb_common\src\mem.rs:2:1: warning: unsafe function's docs are missing a `# Safety` section
+libs\hbb_common\src\password_security.rs:109:5: warning: this `if` statement can be collapsed
+libs\hbb_common\src\password_security.rs:111:36: warning: calling `as_bytes` after slicing a string: help: try: `&s.as_bytes()[VERSION_LEN..]`
+libs\hbb_common\src\password_security.rs:174:1: warning: this returns a `Result<_, ()>`
+libs\hbb_common\src\fingerprint.rs:77:18: warning: the loop variable `round` is only used to index `round_keys`
+libs\hbb_common\src\fingerprint.rs:159:14: warning: the loop variable `i` is used to index `entropy`
+libs\hbb_common\src\fingerprint.rs:236:26: warning: use of `unwrap_or_else` to construct default value: help: try: `unwrap_or_default()`
+libs\hbb_common\src\stream.rs:9:1: warning: large size difference between variants: the entire enum is at least 1472 bytes
+libs\hbb_common\src\websocket.rs:77:77: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `url`
+libs\hbb_common\src\websocket.rs:102:26: warning: this can be `std::io::Error::other(_)`
+libs\hbb_common\src\websocket.rs:188:29: warning: this can be `std::io::Error::other(_)`
+libs\hbb_common\src\websocket.rs:275:37: warning: this can be `std::io::Error::other(_)`
+libs\hbb_common\src\websocket.rs:310:9: warning: match can be simplified with `.unwrap_or_default()`
+libs\hbb_common\src\lib.rs:192:36: warning: usage of a legacy numeric method
+libs\hbb_common\src\lib.rs:232:51: warning: `flatten()` will run forever if the iterator repeatedly produces an `Err`: help: replace with: `map_while(Result::ok)`
+warning: `hbb_common` (lib) generated 68 warnings (run `cargo clippy --fix --lib -p hbb_common` to apply 46 suggestions)
+warning: `hbb_common` (lib) generated 68 warnings (68 duplicates)
+   Compiling rdesk v1.4.5 (C:\Users\wuxiang\Desktop\rust\rustdesk-client)
+libs\remote_printer\src\setup\mod.rs:17:1: warning: module has the same name as its containing module
+libs\remote_printer\src\setup\setup.rs:57:16: warning: explicit call to `.into_iter()` in function argument accepting `IntoIterator`
+    Checking scrap v0.5.0 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\scrap)
+warning: `remote_printer` (lib) generated 2 warnings (run `cargo clippy --fix --lib -p remote_printer` to apply 1 suggestion)
+    Checking enigo v0.0.14 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\enigo)
+libs\clipboard\src\platform\windows.rs:531:5: warning: this function has too many arguments (11/7)
+libs\clipboard\src\platform\windows.rs:545:21: warning: `0 as *mut _` detected: help: try: `std::ptr::null_mut()`
+libs\clipboard\src\platform\windows.rs:784:13: warning: casting to the same type is unnecessary (`u32` -> `u32`): help: try: `ret`
+libs\clipboard\src\platform\windows.rs:804:37: warning: `0 as *mut _` detected: help: try: `std::ptr::null_mut()`
+libs\clipboard\src\platform\windows.rs:841:9: warning: casting to the same type is unnecessary (`u32` -> `u32`): help: try: `ret`
+libs\clipboard\src\platform\windows.rs:909:1: warning: this function has too many arguments (10/7)
+warning: `clipboard` (lib) generated 6 warnings (run `cargo clippy --fix --lib -p clipboard` to apply 4 suggestions)
+libs\scrap\src\common\codec.rs:48:32: warning: constants have by default a `'static` lifetime
+libs\enigo\src\win\win_impl.rs:56:5: warning: this `if` statement can be collapsed
+libs\enigo\src\win\win_impl.rs:115:9: warning: unneeded `return` statement
+libs\enigo\src\win\win_impl.rs:87:34: warning: slow zero-filling initialization: help: consider replacing this with: `vec![0; buff_size]`
+libs\enigo\src\win\win_impl.rs:235:43: warning: using `clone` on type `u16` which implements the `Copy` trait: help: try dereferencing it: `*utf16_surrogate`
+libs\enigo\src\win\win_impl.rs:255:20: warning: casting to the same type is unnecessary (`u16` -> `u16`): help: try: `code`
+libs\enigo\src\win\win_impl.rs:260:32: warning: the loop variable `pos` is used to index `modifiers`
+libs\enigo\src\win\win_impl.rs:269:32: warning: the loop variable `pos` is used to index `modifiers`
+libs\enigo\src\win\win_impl.rs:310:9: warning: unneeded `return` statement
+libs\enigo\src\dsl.rs:40:22: error: using `self.to_string` in `fmt::Display` implementation will cause infinite recursion
+libs\enigo\src\lib.rs:91:1: warning: empty doc comment
+libs\scrap\src\common\mod.rs:400:36: warning: `crate` references the macro call's crate: help: to reference the macro definition's crate, use: `$crate`
+libs\scrap\src\common\mod.rs:417:32: warning: `crate` references the macro call's crate: help: to reference the macro definition's crate, use: `$crate`
+libs\enigo\src\lib.rs:340:5: warning: empty doc comment
+libs\enigo\src\lib.rs:342:5: warning: empty doc comment
+libs\enigo\src\lib.rs:344:5: warning: empty doc comment
+libs\enigo\src\lib.rs:346:5: warning: empty doc comment
+libs\enigo\src\lib.rs:348:5: warning: empty doc comment
+libs\enigo\src\lib.rs:350:5: warning: empty doc comment
+libs\enigo\src\lib.rs:352:5: warning: empty doc comment
+libs\enigo\src\lib.rs:354:5: warning: empty doc comment
+libs\enigo\src\lib.rs:356:5: warning: empty doc comment
+libs\enigo\src\lib.rs:358:5: warning: empty doc comment
+libs\enigo\src\lib.rs:360:5: warning: empty doc comment
+libs\enigo\src\lib.rs:362:5: warning: empty doc comment
+libs\enigo\src\lib.rs:364:5: warning: empty doc comment
+libs\enigo\src\lib.rs:366:5: warning: empty doc comment
+libs\enigo\src\lib.rs:368:5: warning: empty doc comment
+libs\enigo\src\lib.rs:370:5: warning: empty doc comment
+libs\enigo\src\lib.rs:372:5: warning: empty doc comment
+libs\enigo\src\lib.rs:374:5: warning: empty doc comment
+libs\enigo\src\lib.rs:376:5: warning: empty doc comment
+libs\enigo\src\lib.rs:378:5: warning: empty doc comment
+libs\enigo\src\lib.rs:380:5: warning: empty doc comment
+libs\enigo\src\lib.rs:382:5: warning: empty doc comment
+libs\enigo\src\lib.rs:384:5: warning: empty doc comment
+libs\enigo\src\lib.rs:386:5: warning: empty doc comment
+libs\enigo\src\lib.rs:388:5: warning: empty doc comment
+libs\enigo\src\lib.rs:390:5: warning: empty doc comment
+libs\enigo\src\lib.rs:392:5: warning: empty doc comment
+libs\enigo\src\lib.rs:394:5: warning: empty doc comment
+libs\enigo\src\lib.rs:396:5: warning: empty doc comment
+libs\enigo\src\lib.rs:398:5: warning: empty doc comment
+libs\enigo\src\lib.rs:400:5: warning: empty doc comment
+libs\enigo\src\lib.rs:402:5: warning: empty doc comment
+libs\enigo\src\lib.rs:406:5: warning: empty doc comment
+libs\enigo\src\lib.rs:408:5: warning: empty doc comment
+libs\enigo\src\lib.rs:410:5: warning: empty doc comment
+libs\enigo\src\lib.rs:412:5: warning: empty doc comment
+libs\enigo\src\lib.rs:414:5: warning: empty doc comment
+libs\enigo\src\lib.rs:416:5: warning: empty doc comment
+libs\enigo\src\lib.rs:418:5: warning: empty doc comment
+libs\enigo\src\lib.rs:420:5: warning: empty doc comment
+libs\enigo\src\lib.rs:422:5: warning: empty doc comment
+libs\enigo\src\lib.rs:424:5: warning: empty doc comment
+libs\enigo\src\lib.rs:426:5: warning: empty doc comment
+libs\enigo\src\lib.rs:428:5: warning: empty doc comment
+libs\enigo\src\lib.rs:456:16: warning: redundant pattern matching, consider using `is_err()`
+libs\enigo\src\lib.rs:497:5: warning: empty doc comment
+libs\enigo\src\lib.rs:517:9: warning: use of `default` to create a unit struct
+warning: `enigo` (lib) generated 56 warnings
+error: could not compile `enigo` (lib) due to 1 previous error; 56 warnings emitted
+warning: build failed, waiting for other jobs to finish...
+libs\scrap\src\dxgi\gdi.rs:109:13: error: calling `set_len()` immediately after reserving a buffer creates uninitialized values
+libs\scrap\src\dxgi\mag.rs:141:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:152:52: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut winapi::shared::minwindef::__some_function, unsafe extern "C" fn() -> i32>`
+libs\scrap\src\dxgi\mag.rs:156:54: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut winapi::shared::minwindef::__some_function, unsafe extern "C" fn() -> i32>`
+libs\scrap\src\dxgi\mag.rs:160:55: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut winapi::shared::minwindef::__some_function, unsafe extern "C" fn(*mut winapi::shared::windef::HWND__, winapi::shared::windef::RECT) -> i32>`
+libs\scrap\src\dxgi\mag.rs:164:60: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut winapi::shared::minwindef::__some_function, unsafe extern "C" fn(*mut winapi::shared::windef::HWND__, u32, i32, *mut *mut winapi::shared::windef::HWND__) -> i32>`
+libs\scrap\src\dxgi\mag.rs:168:64: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut winapi::shared::minwindef::__some_function, unsafe extern "C" fn(*mut winapi::shared::windef::HWND__, std::option::Option<unsafe extern "C" fn(*mut winapi::shared::windef::HWND__, *mut std::ffi::c_void, dxgi::mag::tagMAGIMAGEHEADER, *mut std::ffi::c_void, dxgi::mag::tagMAGIMAGEHEADER, winapi::shared::windef::RECT, winapi::shared::windef::RECT, *mut winapi::shared::minwindef::HRGN__) -> i32>) -> i32>`
+libs\scrap\src\dxgi\mag.rs:176:32: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:184:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:197:24: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:275:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:318:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:348:32: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:374:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:399:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:419:32: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:428:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:441:31: warning: length comparison to zero: help: using `is_empty` is clearer and more explicit: `cls.is_empty()`
+libs\scrap\src\dxgi\mag.rs:463:32: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:474:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:511:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:538:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:555:32: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:564:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:573:24: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mag.rs:581:43: warning: the function `std::ptr::copy_nonoverlapping` doesn't need a mutable reference
+libs\scrap\src\dxgi\mod.rs:69:33: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:71:42: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:238:33: warning: this `if` statement can be collapsed
+libs\scrap\src\dxgi\mod.rs:335:24: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:345:24: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:365:32: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:375:13: warning: the method `CreateTexture2D` doesn't need a mutable reference
+libs\scrap\src\dxgi\mod.rs:407:24: warning: the following explicit lifetimes could be elided: 'a
+libs\scrap\src\dxgi\mod.rs:423:40: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mod.rs:435:40: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\dxgi\mod.rs:478:28: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:512:21: warning: this looks like you are swapping `desc.Width` and `desc.Height` manually: help: try: `std::mem::swap(&mut desc.Width, &mut desc.Height);`
+libs\scrap\src\dxgi\mod.rs:582:20: warning: this `else { if .. }` block can be collapsed
+libs\scrap\src\dxgi\mod.rs:642:51: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:663:44: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:723:28: error: this call for this type may be undefined behavior
+libs\scrap\src\dxgi\mod.rs:773:13: warning: if let can be simplified with `.unwrap_or_default()`: help: replace it with: `self.read_and_invalidate().unwrap_or_default()`
+libs\scrap\src\dxgi\mod.rs:773:13: warning: this block may be rewritten with the `?` operator: help: replace it with: `self.read_and_invalidate()?`
+libs\scrap\src\dxgi\mod.rs:813:9: warning: manual implementation of `ok`: help: replace with: `CapturerGDI::new(self.name(), self.width(), self.height()).ok()`
+libs\scrap\src\common\dxgi.rs:82:9: warning: calls to `push` immediately after creation: help: consider using the `vec![]` macro: `let stride = vec![..];`
+libs\scrap\src\common\dxgi.rs:135:42: warning: use of `unwrap_or` to construct default value: help: try: `unwrap_or_default()`
+libs\scrap\src\common\dxgi.rs:161:23: warning: match can be simplified with `.unwrap_or_default()`: help: ascribe the type usize and replace your expression with: `displays_dxgi.iter().position(|d| d.name() == *name).unwrap_or_default()`
+libs\scrap\src\common\codec.rs:193:27: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!decodings.is_empty()`
+libs\scrap\src\common\codec.rs:194:27: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!decodings.is_empty()`
+libs\scrap\src\common\codec.rs:198:13: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!decodings.is_empty()`
+libs\scrap\src\common\codec.rs:200:13: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!decodings.is_empty()`
+libs\scrap\src\common\codec.rs:261:38: warning: using `clone` on type `EnumOrUnknown<PreferCodec>` which implements the `Copy` trait: help: try dereferencing it: `*pref`
+libs\scrap\src\common\codec.rs:313:12: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!decodings.is_empty()`
+libs\scrap\src\common\codec.rs:328:9: warning: using `clone` on type `CodecFormat` which implements the `Copy` trait: help: try dereferencing it: `*ENCODE_CODEC_FORMAT.lock().unwrap()`
+libs\scrap\src\common\codec.rs:396:23: warning: using `clone` on type `CodecFormat` which implements the `Copy` trait: help: try dereferencing it: `*ENCODE_CODEC_FORMAT.lock().unwrap()`
+libs\scrap\src\common\codec.rs:939:1: warning: this `impl` can be derived
+libs\scrap\src\common\codec.rs:947:9: warning: match expression looks like `matches!` macro: help: try: `matches!(self, Quality::Custom(_))`
+libs\scrap\src\common\codec.rs:1057:21: warning: using `clone` on type `Option<Instant>` which implements the `Copy` trait: help: try dereferencing it: `*THREAD_LOG_TIME.lock().unwrap()`
+libs\scrap\src\common\codec.rs:1116:45: warning: casting to the same type is unnecessary (`usize` -> `usize`): help: try: `((dst_fmt.h * dst_stride_y * 2))`
+libs\scrap\src\common\convert.rs:56:28: warning: manually reimplementing `div_ceil`: help: consider using `.div_ceil()`: `x.div_ceil(64)`
+libs\scrap\src\common\convert.rs:69:13: error: calling `set_len()` immediately after reserving a buffer creates uninitialized values
+libs\scrap\src\common\mod.rs:387:43: warning: transmute from a type (`i32`) to itself
+libs\scrap\src\common\vpxcodec.rs:29:1: warning: this `impl` can be derived
+libs\scrap\src\common\mod.rs:415:53: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*const common::vpx::vpx_codec_iface, isize>`
+libs\scrap\src\common\mod.rs:387:53: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<common::vpx::vpx_codec_err_t, i32>`
+libs\scrap\src\common\vpxcodec.rs:190:12: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!frames.is_empty()`
+libs\scrap\src\common\mod.rs:415:53: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut common::vpx::vpx_image, isize>`
+libs\scrap\src\common\vpxcodec.rs:297:21: warning: useless conversion to the same type: `std::vec::Vec<hbb_common::message_proto::EncodedVideoFrame>`: help: consider removing `.into()`: `frames`
+libs\scrap\src\common\vpxcodec.rs:531:13: warning: unneeded `return` statement
+libs\scrap\src\common\vpxcodec.rs:533:13: warning: unneeded `return` statement
+libs\scrap\src\common\vpxcodec.rs:542:5: warning: you should consider adding a `Default` implementation for `Image`
+libs\scrap\src\common\vpxcodec.rs:577:10: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[0]`
+libs\scrap\src\common\vpxcodec.rs:577:23: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[1]`
+libs\scrap\src\common\vpxcodec.rs:577:36: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[2]`
+libs\scrap\src\common\vpxcodec.rs:577:49: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[3]`
+libs\scrap\src\common\vpxcodec.rs:583:10: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[0]`
+libs\scrap\src\common\vpxcodec.rs:583:27: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[1]`
+libs\scrap\src\common\vpxcodec.rs:583:44: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[2]`
+libs\scrap\src\common\vpxcodec.rs:583:61: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[3]`
+libs\scrap\src\common\aom.rs:85:28: warning: manual `Range::contains` implementation: help: use: `(960 * 540..1920 * 1080).contains(&resolution)`
+libs\scrap\src\common\mod.rs:387:53: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<common::aom::aom_codec_err_t, i32>`
+libs\scrap\src\common\mod.rs:415:53: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*const common::aom::aom_codec_iface, isize>`
+libs\scrap\src\common\aom.rs:243:12: warning: length comparison to zero: help: using `!is_empty` is clearer and more explicit: `!frames.is_empty()`
+libs\scrap\src\common\mod.rs:415:53: warning: transmute used without annotations: help: consider adding missing annotations: `transmute::<*mut common::aom::aom_image, isize>`
+libs\scrap\src\common\aom.rs:330:21: warning: useless conversion to the same type: `std::vec::Vec<hbb_common::message_proto::EncodedVideoFrame>`: help: consider removing `.into()`: `frames`
+libs\scrap\src\common\aom.rs:517:13: warning: unneeded `return` statement
+libs\scrap\src\common\aom.rs:519:13: warning: unneeded `return` statement
+libs\scrap\src\common\aom.rs:527:5: warning: you should consider adding a `Default` implementation for `Image`
+libs\scrap\src\common\aom.rs:561:10: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[0]`
+libs\scrap\src\common\aom.rs:561:23: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[1]`
+libs\scrap\src\common\aom.rs:561:36: warning: casting to the same type is unnecessary (`i32` -> `i32`): help: try: `s[2]`
+libs\scrap\src\common\aom.rs:567:10: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[0]`
+libs\scrap\src\common\aom.rs:567:27: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[1]`
+libs\scrap\src\common\aom.rs:567:44: warning: casting raw pointers to the same type and constness is unnecessary (`*mut u8` -> `*mut u8`): help: try: `p[2]`
+libs\scrap\src\common\camera.rs:121:18: warning: unneeded `return` statement
+libs\scrap\src\common\camera.rs:219:28: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\common\camera.rs:248:35: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\common\camera.rs:254:27: warning: this can be `std::io::Error::other(_)`
+libs\scrap\src\common\record.rs:253:12: warning: using `clone` on type `Option<i64>` which implements the `Copy` trait: help: try removing the `clone` call: `old_pts`
+libs\scrap\src\common\record.rs:285:25: warning: omit braces around single expression condition
+libs\scrap\src\common\record.rs:349:17: warning: this `map_or` can be simplified
+libs\scrap\src\common\record.rs:349:17: warning: replacing an `Option` with `None`: help: consider `Option::take()` instead: `self.webm.take()`
+libs\scrap\src\common\mod.rs:192:18: warning: the following explicit lifetimes could be elided: 'a
+libs\scrap\src\common\mod.rs:207:32: warning: this expression creates a reference which is immediately dereferenced by the compiler: help: change this to: `pixelbuffer`
+libs\scrap\src\common\mod.rs:257:9: warning: manually reimplementing `div_ceil`: help: consider using `.div_ceil()`: `self.bpp().div_ceil(8)`
+libs\scrap\src\common\mod.rs:352:1: warning: direct implementation of `ToString`
+libs\scrap\src\common\mod.rs:454:9: error: calling `set_len()` immediately after reserving a buffer creates uninitialized values
+libs\scrap\src\common\mod.rs:540:22: warning: casting to the same type is unnecessary (`usize` -> `usize`): help: try: `self.height()`
+warning: `scrap` (lib) generated 168 warnings (68 duplicates)
+error: could not compile `scrap` (lib) due to 12 previous errors; 168 warnings emitted

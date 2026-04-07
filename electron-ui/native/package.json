@@ -1,0 +1,13 @@
+{
+  "name": "rustdesk-napi",
+  "version": "0.1.0",
+  "napi": {
+    "name": "rustdesk-napi",
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "x86_64-pc-windows-msvc"
+      ]
+    }
+  }
+}

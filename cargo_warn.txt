@@ -1,0 +1,67 @@
+   Compiling ring v0.17.14
+   Compiling zstd-sys v2.0.11+zstd.1.5.6
+   Compiling machine-uid v0.3.0 (https://github.com/rustdesk-org/machine-uid#381ff579)
+   Compiling mozjpeg-sys v2.2.2
+   Compiling webm-sys v1.0.4 (https://github.com/rustdesk-org/rust-webm#d2c4d3ac)
+   Compiling bzip2-sys v0.1.11+1.0.8
+   Compiling clipboard v0.1.0 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\clipboard)
+   Compiling impersonate_system v0.1.0 (https://github.com/rustdesk-org/impersonate-system#2f429010)
+   Compiling kcp-sys v0.1.0 (https://github.com/rustdesk-org/kcp-sys#32a6c09f)
+    Checking bzip2 v0.4.4
+   Compiling rustls v0.23.28
+    Checking webm v1.1.0 (https://github.com/rustdesk-org/rust-webm#d2c4d3ac)
+    Checking mozjpeg v0.10.11
+   Compiling zstd-safe v7.1.0
+   Compiling zstd-safe v5.0.2+zstd.1.5.2
+    Checking nokhwa-core v0.1.5 (https://github.com/rustdesk-org/nokhwa.git?branch=fix_from_raw_parts#c2f74662)
+   Compiling zstd v0.13.1
+    Checking zstd v0.11.2+zstd.1.5.2
+    Checking nokhwa-bindings-macos v0.2.2 (https://github.com/rustdesk-org/nokhwa.git?branch=fix_from_raw_parts#c2f74662)
+    Checking nokhwa-bindings-windows v0.4.2 (https://github.com/rustdesk-org/nokhwa.git?branch=fix_from_raw_parts#c2f74662)
+    Checking nokhwa-bindings-linux v0.1.1 (https://github.com/rustdesk-org/nokhwa.git?branch=fix_from_raw_parts#c2f74662)
+    Checking zip v0.6.6
+    Checking rustls-webpki v0.103.3
+    Checking nokhwa v0.10.7 (https://github.com/rustdesk-org/nokhwa.git?branch=fix_from_raw_parts#c2f74662)
+    Checking tokio-rustls v0.26.0
+    Checking tungstenite v0.26.2
+    Checking rustls-platform-verifier v0.6.2
+    Checking hyper-rustls v0.27.7
+    Checking reqwest v0.12.24
+    Checking tokio-tungstenite v0.26.2
+    Checking hbb_common v0.1.0 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\hbb_common)
+    Checking virtual_display v0.1.0 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\virtual_display)
+    Checking enigo v0.0.14 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\enigo)
+    Checking scrap v0.5.0 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\scrap)
+    Checking remote_printer v0.1.0 (C:\Users\wuxiang\Desktop\rust\rustdesk-client\libs\remote_printer)
+   Compiling rdesk v1.4.5 (C:\Users\wuxiang\Desktop\rust\rustdesk-client)
+src\server\service.rs:3:5: warning: unused import: `collections::HashSet`
+src\server\video_service.rs:57:5: warning: unused import: `collections::HashSet`
+src\client\io_loop.rs:22:5: warning: unused import: `hbb_common::tokio::sync::mpsc::error::TryRecvError`
+src\ipc.rs:28:16: warning: unused import: `self`
+src\ui_cm_interface.rs:29:23: warning: unused import: `option2bool`
+src\hbbs_http\sync.rs:187:52: warning: use of deprecated function `hbb_common::base64::encode`: Use Engine::encode
+src\server\terminal_helper.rs:817:9: warning: variable does not need to be mutable
+src\server\terminal_helper.rs:818:9: warning: variable does not need to be mutable
+src\common.rs:1568:9: warning: unused variable: `i`: help: if this is intentional, prefix it with an underscore: `_i`
+src\client.rs:1488:21: warning: variable does not need to be mutable
+src\client.rs:1481:35: warning: unused variable: `info`: help: if this is intentional, prefix it with an underscore: `_info`
+src\tray.rs:60:9: warning: variable does not need to be mutable
+src\server\input_service.rs:483:7: warning: constant `MOUSE_MOVE_PROTECTION_TIMEOUT` is never used
+src\server\input_service.rs:485:7: warning: constant `MOUSE_ACTIVE_DISTANCE` is never used
+src\ui.rs:605:8: warning: methods `http_request` and `get_http_status` are never used
+src\updater.rs:23:8: warning: static `CONTROLLING_SESSION_COUNT` is never used
+src\updater.rs:27:8: warning: function `update_controlling_session_count` is never used
+src\hbbs_http.rs:17:10: warning: enum `HbbHttpResponse` is never used
+src\hbbs_http\downloader.rs:26:12: warning: struct `DownloadData` is never constructed
+src\hbbs_http\downloader.rs:38:8: warning: struct `Downloader` is never constructed
+src\hbbs_http\downloader.rs:50:8: warning: function `download_file` is never used
+src\hbbs_http\downloader.rs:128:10: warning: function `do_download` is never used
+src\hbbs_http\downloader.rs:239:8: warning: function `get_download_data` is never used
+src\hbbs_http\downloader.rs:264:8: warning: function `cancel` is never used
+src\hbbs_http\downloader.rs:272:8: warning: function `remove` is never used
+src\hbbs_http\http_client.rs:233:14: warning: function `create_http_client_async_with_url` is never used
+src\hbbs_http\http_client.rs:252:10: warning: function `create_http_client_async_with_url_` is never used
+warning: `rdesk` (lib) generated 27 warnings (run `cargo fix --lib -p rdesk` to apply 11 suggestions)
+src\service.rs:1:5: warning: unused import: `librdesk::*`
+warning: `rdesk` (bin "service") generated 1 warning (run `cargo fix --bin "service" -p rdesk` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 16.56s

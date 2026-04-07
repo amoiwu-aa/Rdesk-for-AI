@@ -1,0 +1,79 @@
+﻿diff --git a/src/server/video_service.rs b/src/server/video_service.rs
+index 3afa0442..4b1fbcd9 100644
+--- a/src/server/video_service.rs
++++ b/src/server/video_service.rs
+@@ -45,10 +45,8 @@ use scrap::vram::{VRamEncoder, VRamEncoderConfig};
+ #[cfg(not(windows))]
+ use scrap::Capturer;
+ use scrap::{
+-    aom::AomEncoderConfig,
+     codec::{Encoder, EncoderApi, EncoderCfg},
+     record::{Recorder, RecorderContext},
+-    vpxcodec::{VpxEncoderConfig, VpxVideoCodecId},
+     CodecFormat, Display, EncodeInput, TraitCapturer, TraitPixelBuffer,
+ };
+ #[cfg(windows)]
+@@ -648,24 +646,8 @@ fn run(vs: VideoService) -> ResultType<()> {
+     ) {
+         Ok(result) => result,
+         Err(err) => {
+-            log::error!("Failed to create encoder: {err:?}, fallback to VP9");
+-            Encoder::set_fallback(&EncoderCfg::VPX(VpxEncoderConfig {
+-                width: c.width as _,
+-                height: c.height as _,
+-                quality,
+-                codec: VpxVideoCodecId::VP9,
+-                keyframe_interval: None,
+-            }));
+-            setup_encoder(
+-                &c,
+-                sp.name(),
+-                quality,
+-                client_record,
+-                record_incoming,
+-                last_portable_service_running,
+-                vs.source,
+-                display_idx,
+-            )?
++            log::error!("Failed to create H264/H265 encoder: {err:?}");
++            return Err(err);
+         }
+     };
+     #[cfg(feature = "vram")]
+@@ -1332,34 +1314,9 @@ fn get_encoder_config(
+                     keyframe_interval,
+                 });
+             }
+-            EncoderCfg::VPX(VpxEncoderConfig {
+-                width: c.width as _,
+-                height: c.height as _,
+-                quality,
+-                codec: VpxVideoCodecId::VP9,
+-                keyframe_interval,
+-            })
++            panic!("No H264/H265 encoder path available for the current environment")
+         }
+-        CodecFormat::VP9 => EncoderCfg::VPX(VpxEncoderConfig {
+-            width: c.width as _,
+-            height: c.height as _,
+-            quality,
+-            codec: VpxVideoCodecId::VP9,
+-            keyframe_interval,
+-        }),
+-        CodecFormat::AV1 => EncoderCfg::AOM(AomEncoderConfig {
+-            width: c.width as _,
+-            height: c.height as _,
+-            quality,
+-            keyframe_interval,
+-        }),
+-        _ => EncoderCfg::VPX(VpxEncoderConfig {
+-            width: c.width as _,
+-            height: c.height as _,
+-            quality,
+-            codec: VpxVideoCodecId::VP9,
+-            keyframe_interval,
+-        }),
++        _ => panic!("Only H264/H265 are supported"),
+     }
+ }
+ 

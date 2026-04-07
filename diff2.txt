@@ -1,0 +1,1067 @@
+﻿diff --git a/.claude/settings.local.json b/.claude/settings.local.json
+index 3e52ca81..5ba85b4a 100644
+--- a/.claude/settings.local.json
++++ b/.claude/settings.local.json
+@@ -9,7 +9,24 @@
+       "Bash(git apply:*)",
+       "Bash(VCPKG_ROOT=C:/vcpkg python build.py:*)",
+       "Bash(VCPKG_ROOT=C:/vcpkg cargo build:*)",
+-      "Bash(cmd //c \"cd /d C:\\\\Users\\\\wuxiang\\\\Desktop\\\\rust\\\\rustdesk-client && set VCPKG_ROOT=C:\\\\vcpkg && python build.py --flutter --hwcodec --vram --skip-portable-pack 2>&1\")"
++      "Bash(cmd //c \"cd /d C:\\\\Users\\\\wuxiang\\\\Desktop\\\\rust\\\\rustdesk-client && set VCPKG_ROOT=C:\\\\vcpkg && python build.py --flutter --hwcodec --vram --skip-portable-pack 2>&1\")",
++      "Bash(# Check what DLLs librdesk.dll depends on dumpbin //DEPENDENTS \"\"C:/Users/wuxiang/Desktop/rust/rustdesk-client/target/release/librdesk.dll\"\")",
++      "Bash(cmd //c \"where /R C:\\\\ flutter.bat 2>nul\")",
++      "Bash(reg query:*)",
++      "Bash(tr:*)",
++      "Bash(\"C:/Users/wuxiang/flutter/bin/flutter.bat\" --version)",
++      "Bash(\"D:/rustdesk/flutter/bin/flutter.bat\" --version)",
++      "Bash(PATH=\"D:/rustdesk/flutter/bin:$PATH\" flutter --version:*)",
++      "Bash(\"D:/rustdesk/flutter/bin/flutter\" --version)",
++      "Bash(cmd //c \"set PATH=D:\\\\rustdesk\\\\flutter\\\\bin;%PATH% && flutter --version\")",
++      "Bash(git add:*)",
++      "Bash(git commit:*)",
++      "Bash(git checkout:*)",
++      "Bash(find:*)",
++      "Bash(git fsck:*)",
++      "Bash(git stash:*)",
++      "Bash(git revert:*)",
++      "Bash(git reset:*)"
+     ]
+   }
+ }
+diff --git a/Cargo.lock b/Cargo.lock
+index 7495e272..a84deac7 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -6777,6 +6777,121 @@ dependencies = [
+  "yasna",
+ ]
+ 
++[[package]]
++name = "rdesk"
++version = "1.4.5"
++dependencies = [
++ "android-wakelock",
++ "android_logger",
++ "arboard",
++ "async-process",
++ "async-trait",
++ "bytemuck",
++ "bytes",
++ "cc",
++ "cfg-if 1.0.0",
++ "chrono",
++ "cidr-utils",
++ "clap 4.5.53",
++ "clipboard",
++ "clipboard-master",
++ "cocoa 0.24.1",
++ "core-foundation 0.9.4",
++ "core-graphics 0.22.3",
++ "cpal",
++ "crossbeam-queue",
++ "ctrlc",
++ "dasp",
++ "dbus",
++ "dbus-crossroads",
++ "default-net",
++ "dispatch",
++ "docopt",
++ "enigo",
++ "errno",
++ "evdev",
++ "flutter_rust_bridge",
++ "fon",
++ "fontdb",
++ "foreign-types 0.3.2",
++ "fruitbasket",
++ "gtk",
++ "hbb_common",
++ "hex",
++ "hound",
++ "image 0.24.9",
++ "impersonate_system",
++ "include_dir",
++ "jni",
++ "kcp-sys",
++ "keepawake",
++ "lazy_static",
++ "libloading 0.8.4",
++ "libpulse-binding",
++ "libpulse-simple-binding",
++ "mac_address",
++ "magnum-opus",
++ "nix 0.29.0",
++ "num_cpus",
++ "objc",
++ "objc_id",
++ "once_cell",
++ "openssl",
++ "os-version",
++ "pam",
++ "parity-tokio-ipc",
++ "percent-encoding",
++ "piet",
++ "piet-coregraphics",
++ "portable-pty",
++ "qrcode-generator",
++ "rdev",
++ "remote_printer",
++ "repng",
++ "reqwest",
++ "ringbuf",
++ "rpassword 7.3.1",
++ "rubato",
++ "runas",
++ "rust-pulsectl",
++ "samplerate",
++ "sciter-rs",
++ "scrap",
++ "serde 1.0.228",
++ "serde_derive",
++ "serde_json 1.0.118",
++ "serde_repr",
++ "sha2",
++ "shared_memory",
++ "shutdown_hooks",
++ "softbuffer",
++ "stunclient",
++ "sys-locale",
++ "system_shutdown",
++ "tao",
++ "tauri-winrt-notification",
++ "terminfo",
++ "termios 0.3.3",
++ "tiny-skia",
++ "totp-rs",
++ "tray-icon",
++ "ttf-parser",
++ "url",
++ "uuid",
++ "virtual_display",
++ "wallpaper",
++ "winapi 0.3.9",
++ "windows 0.61.1",
++ "windows-service",
++ "winit",
++ "winreg 0.11.0",
++ "winres",
++ "wol-rs",
++ "x11-clipboard 0.8.1",
++ "x11rb 0.12.0",
++ "zip",
++]
++
+ [[package]]
+ name = "rdev"
+ version = "0.5.0-2"
+@@ -7113,121 +7228,6 @@ dependencies = [
+  "semver",
+ ]
+ 
+-[[package]]
+-name = "rustdesk"
+-version = "1.4.5"
+-dependencies = [
+- "android-wakelock",
+- "android_logger",
+- "arboard",
+- "async-process",
+- "async-trait",
+- "bytemuck",
+- "bytes",
+- "cc",
+- "cfg-if 1.0.0",
+- "chrono",
+- "cidr-utils",
+- "clap 4.5.53",
+- "clipboard",
+- "clipboard-master",
+- "cocoa 0.24.1",
+- "core-foundation 0.9.4",
+- "core-graphics 0.22.3",
+- "cpal",
+- "crossbeam-queue",
+- "ctrlc",
+- "dasp",
+- "dbus",
+- "dbus-crossroads",
+- "default-net",
+- "dispatch",
+- "docopt",
+- "enigo",
+- "errno",
+- "evdev",
+- "flutter_rust_bridge",
+- "fon",
+- "fontdb",
+- "foreign-types 0.3.2",
+- "fruitbasket",
+- "gtk",
+- "hbb_common",
+- "hex",
+- "hound",
+- "image 0.24.9",
+- "impersonate_system",
+- "include_dir",
+- "jni",
+- "kcp-sys",
+- "keepawake",
+- "lazy_static",
+- "libloading 0.8.4",
+- "libpulse-binding",
+- "libpulse-simple-binding",
+- "mac_address",
+- "magnum-opus",
+- "nix 0.29.0",
+- "num_cpus",
+- "objc",
+- "objc_id",
+- "once_cell",
+- "openssl",
+- "os-version",
+- "pam",
+- "parity-tokio-ipc",
+- "percent-encoding",
+- "piet",
+- "piet-coregraphics",
+- "portable-pty",
+- "qrcode-generator",
+- "rdev",
+- "remote_printer",
+- "repng",
+- "reqwest",
+- "ringbuf",
+- "rpassword 7.3.1",
+- "rubato",
+- "runas",
+- "rust-pulsectl",
+- "samplerate",
+- "sciter-rs",
+- "scrap",
+- "serde 1.0.228",
+- "serde_derive",
+- "serde_json 1.0.118",
+- "serde_repr",
+- "sha2",
+- "shared_memory",
+- "shutdown_hooks",
+- "softbuffer",
+- "stunclient",
+- "sys-locale",
+- "system_shutdown",
+- "tao",
+- "tauri-winrt-notification",
+- "terminfo",
+- "termios 0.3.3",
+- "tiny-skia",
+- "totp-rs",
+- "tray-icon",
+- "ttf-parser",
+- "url",
+- "uuid",
+- "virtual_display",
+- "wallpaper",
+- "winapi 0.3.9",
+- "windows 0.61.1",
+- "windows-service",
+- "winit",
+- "winreg 0.11.0",
+- "winres",
+- "wol-rs",
+- "x11-clipboard 0.8.1",
+- "x11rb 0.12.0",
+- "zip",
+-]
+-
+ [[package]]
+ name = "rustdesk-portable-packer"
+ version = "1.4.5"
+diff --git a/Cargo.toml b/Cargo.toml
+index 86ccff07..c662f890 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -1,15 +1,15 @@
+ [package]
+-name = "rustdesk"
++name = "rdesk"
+ version = "1.4.5"
+ authors = ["rustdesk <info@rustdesk.com>"]
+ edition = "2021"
+ build= "build.rs"
+ description = "RDesk Remote Desktop"
+-default-run = "rustdesk"
++default-run = "rdesk"
+ rust-version = "1.75"
+ 
+ [lib]
+-name = "librustdesk"
++name = "librdesk"
+ crate-type = ["cdylib", "staticlib", "rlib"]
+ 
+ [[bin]]
+diff --git a/build.py b/build.py
+index e12ab03d..bc6a191b 100644
+--- a/build.py
++++ b/build.py
+@@ -14,7 +14,7 @@ from pathlib import Path
+ windows = platform.platform().startswith('Windows')
+ osx = platform.platform().startswith(
+     'Darwin') or platform.platform().startswith("macOS")
+-hbb_name = 'rustdesk' + ('.exe' if windows else '')
++hbb_name = 'rdesk' + ('.exe' if windows else '')
+ exe_path = 'target/release/' + hbb_name
+ if windows:
+     flutter_build_dir = 'build/windows/x64/runner/Release/'
+@@ -434,7 +434,7 @@ def build_flutter_arch_manjaro(version, features):
+ def build_flutter_windows(version, features, skip_portable_pack):
+     if not skip_cargo:
+         system2(f'cargo build --features {features} --lib --release')
+-        if not os.path.exists("target/release/librustdesk.dll"):
++        if not os.path.exists("target/release/librdesk.dll"):
+             print("cargo build failed, please check rust source code.")
+             exit(-1)
+     os.chdir('flutter')
+@@ -447,19 +447,19 @@ def build_flutter_windows(version, features, skip_portable_pack):
+     os.chdir('libs/portable')
+     system2('pip3 install -r requirements.txt')
+     system2(
+-        f'python ./generate.py -f ../../{flutter_build_dir_2} -o . -e ../../{flutter_build_dir_2}/rustdesk.exe')
++        f'python ./generate.py -f ../../{flutter_build_dir_2} -o . -e ../../{flutter_build_dir_2}/rdesk.exe')
+     os.chdir('../..')
+-    if os.path.exists('./rustdesk_portable.exe'):
++    if os.path.exists('./rdesk_portable.exe'):
+         os.replace('./target/release/rustdesk-portable-packer.exe',
+-                   './rustdesk_portable.exe')
++                   './rdesk_portable.exe')
+     else:
+         os.rename('./target/release/rustdesk-portable-packer.exe',
+-                  './rustdesk_portable.exe')
++                  './rdesk_portable.exe')
+     print(
+-        f'output location: {os.path.abspath(os.curdir)}/rustdesk_portable.exe')
+-    os.rename('./rustdesk_portable.exe', f'./rustdesk-{version}-install.exe')
++        f'output location: {os.path.abspath(os.curdir)}/rdesk_portable.exe')
++    os.replace('./rdesk_portable.exe', f'./rdesk-{version}-install.exe')
+     print(
+-        f'output location: {os.path.abspath(os.curdir)}/rustdesk-{version}-install.exe')
++        f'output location: {os.path.abspath(os.curdir)}/rdesk-{version}-install.exe')
+ 
+ 
+ def main():
+@@ -497,13 +497,13 @@ def main():
+             return
+         system2('cargo build --release --features ' + features)
+         # system2('upx.exe target/release/rustdesk.exe')
+-        system2('mv target/release/rustdesk.exe target/release/RDesk.exe')
++        system2('mv target/release/rdesk.exe target/release/RDesk.exe')
+         pa = os.environ.get('P')
+         if pa:
+             # https://certera.com/kb/tutorial-guide-for-safenet-authentication-client-for-code-signing/
+             system2(
+                 f'signtool sign /a /v /p {pa} /debug /f .\\cert.pfx /t http://timestamp.digicert.com  '
+-                'target\\release\\rustdesk.exe')
++                'target\\release\\rdesk.exe')
+         else:
+             print('Not signed')
+         system2(
+diff --git a/build_flutter.bat b/build_flutter.bat
+index 6a434060..ae397612 100644
+--- a/build_flutter.bat
++++ b/build_flutter.bat
+@@ -16,6 +16,7 @@ if not defined VS_PATH (
+     exit /b 1
+ )
+ call "%VS_PATH%\VC\Auxiliary\Build\vcvarsall.bat" x64
++set "PATH=D:\rustdesk\flutter\bin;%PATH%"
+ set "VCPKG_ROOT=C:\vcpkg"
+ set "VCPKG_INSTALLED_ROOT=C:\vcpkg\installed"
+ set "BINDGEN_EXTRA_CLANG_ARGS=-IC:\vcpkg\installed\x64-windows-static\include"
+@@ -40,6 +41,11 @@ goto skip_clean
+ 
+ :do_clean
+ echo.
++echo Cleaning Rust build cache...
++cd /d "%~dp0"
++cargo clean
++echo Rust cache cleared.
++echo.
+ echo Cleaning Flutter build cache...
+ cd /d "%~dp0\flutter"
+ call flutter clean
+@@ -77,8 +83,8 @@ echo.
+ echo ========================================
+ echo  BUILD SUCCESS!
+ if "%choice%"=="2" (
+-    echo  Installer: rustdesk-*-install.exe (RDesk)
++    echo  Installer: rdesk-*-install.exe (RDesk)
+ )
+-echo  Portable:  flutter\build\windows\x64\runner\Release\rustdesk.exe (RDesk)
++echo  Portable:  flutter\build\windows\x64\runner\Release\rdesk.exe (RDesk)
+ echo ========================================
+ pause
+diff --git a/electron-ui/native/Cargo.toml b/electron-ui/native/Cargo.toml
+index 2b5c6890..2f3a8c09 100644
+--- a/electron-ui/native/Cargo.toml
++++ b/electron-ui/native/Cargo.toml
+@@ -12,7 +12,7 @@ napi = { version = "2", features = ["napi8", "tokio_rt", "serde-json"] }
+ napi-derive = "2"
+ 
+ # RustDesk core as rlib (WITHOUT flutter feature)
+-librustdesk = { package = "rustdesk", path = "../..", default-features = false, features = ["use_dasp"] }
++librustdesk = { package = "rdesk", path = "../..", default-features = false, features = ["use_dasp"] }
+ # Direct dependencies from RustDesk workspace
+ hbb_common = { path = "../../libs/hbb_common" }
+ scrap = { path = "../../libs/scrap", features = ["wayland"] }
+diff --git a/electron-ui/native/src/handler.rs b/electron-ui/native/src/handler.rs
+index 63c4e8f7..97860fcb 100644
+--- a/electron-ui/native/src/handler.rs
++++ b/electron-ui/native/src/handler.rs
+@@ -206,6 +206,10 @@ impl InvokeUiSession for ElectronHandler {
+                     "chroma",
+                     &status.chroma.as_deref().unwrap_or(""),
+                 ),
++                (
++                    "connection_type",
++                    &status.connection_type.as_deref().unwrap_or(""),
++                ),
+             ],
+         );
+     }
+diff --git a/electron-ui/package.json b/electron-ui/package.json
+index c011f731..10b1b4c1 100644
+--- a/electron-ui/package.json
++++ b/electron-ui/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "rustdesk-electron-ui",
++  "name": "rdesk-electron-ui",
+   "version": "0.1.0",
+   "description": "RustDesk Electron UI PoC - Desktop remote control interface",
+   "type": "module",
+diff --git a/electron-ui/src/renderer/hooks/useRemoteSession.ts b/electron-ui/src/renderer/hooks/useRemoteSession.ts
+index c63180c4..c8c71c2b 100644
+--- a/electron-ui/src/renderer/hooks/useRemoteSession.ts
++++ b/electron-ui/src/renderer/hooks/useRemoteSession.ts
+@@ -25,6 +25,7 @@ export interface QualityStatus {
+   decoderType: string
+   targetBitrate: string
+   chroma: string
++  connectionType: string
+ }
+ 
+ export interface ConnectionInfo {
+@@ -227,6 +228,7 @@ export function useRemoteSession({ sessionId, peerId: rawPeerId, forceRelay = fa
+               decoderType: (evt.decoder_type as string) || '',
+               targetBitrate: (evt.target_bitrate as string) || '',
+               chroma: (evt.chroma as string) || '',
++              connectionType: (evt.connection_type as string) || '',
+             }
+             if (!prev) return incoming
+             return {
+@@ -238,6 +240,7 @@ export function useRemoteSession({ sessionId, peerId: rawPeerId, forceRelay = fa
+               decoderType: incoming.decoderType || prev.decoderType,
+               targetBitrate: incoming.targetBitrate || prev.targetBitrate,
+               chroma: incoming.chroma || prev.chroma,
++              connectionType: incoming.connectionType || prev.connectionType,
+             }
+           })
+           break
+diff --git a/electron-ui/src/renderer/pages/RemoteDesktop.tsx b/electron-ui/src/renderer/pages/RemoteDesktop.tsx
+index b0b6fa9b..72c2e173 100644
+--- a/electron-ui/src/renderer/pages/RemoteDesktop.tsx
++++ b/electron-ui/src/renderer/pages/RemoteDesktop.tsx
+@@ -418,6 +418,11 @@ export default function RemoteDesktop() {
+                 {qualityStatus.chroma && (
+                   <span title="Chroma">{qualityStatus.chroma}</span>
+                 )}
++                {qualityStatus.connectionType && (
++                  <span className="px-1.5 py-0 rounded bg-surface-lighter/50" title="Connection Type">
++                    {qualityStatus.connectionType}
++                  </span>
++                )}
+               </div>
+             )}
+           </div>
+diff --git a/flutter/lib/common/widgets/toolbar.dart b/flutter/lib/common/widgets/toolbar.dart
+index 11b4d099..0e8c5ffe 100644
+--- a/flutter/lib/common/widgets/toolbar.dart
++++ b/flutter/lib/common/widgets/toolbar.dart
+@@ -493,7 +493,7 @@ Future<void> applyPerformanceMode(
+     switch (mode) {
+       case kPerformanceModeMaintenance:
+         quality = 'low';
+-        fps = 2;
++        fps = 10;
+         codec = 'auto';
+         break;
+       case kPerformanceModeOffice:
+diff --git a/flutter/lib/models/ab_model.dart b/flutter/lib/models/ab_model.dart
+index 81c4dc85..3f14a288 100644
+--- a/flutter/lib/models/ab_model.dart
++++ b/flutter/lib/models/ab_model.dart
+@@ -1951,24 +1951,21 @@ List<dynamic> _jsonDecodeRespList(String body, int statusCode) {
+ 
+ String _jsonDecodeActionResp(http.Response resp) {
+   var errMsg = '';
+-  if (resp.statusCode == 200 && resp.body.isEmpty) {
+-    // ok
++  if (resp.statusCode == 200) {
++    // For 200 responses, only report error if the response body explicitly contains an error field
++    if (resp.body.isNotEmpty) {
++      try {
++        errMsg = jsonDecode(resp.body)['error']?.toString() ?? '';
++      } catch (_) {}
++    }
+   } else {
+     try {
+-      errMsg = jsonDecode(resp.body)['error'].toString();
++      errMsg = jsonDecode(resp.body)['error']?.toString() ?? '';
+     } catch (_) {}
+     if (errMsg.isEmpty) {
+-      if (resp.statusCode != 200) {
+-        errMsg = 'HTTP ${resp.statusCode}';
+-      }
++      errMsg = 'HTTP ${resp.statusCode}';
+       if (resp.body.isNotEmpty) {
+-        if (errMsg.isNotEmpty) {
+-          errMsg += ', ';
+-        }
+-        errMsg += resp.body;
+-      }
+-      if (errMsg.isEmpty) {
+-        errMsg = "unknown error";
++        errMsg += ', ${resp.body}';
+       }
+     }
+   }
+diff --git a/flutter/lib/models/native_model.dart b/flutter/lib/models/native_model.dart
+index b5786783..89dbd925 100644
+--- a/flutter/lib/models/native_model.dart
++++ b/flutter/lib/models/native_model.dart
+@@ -118,17 +118,17 @@ class PlatformFFI {
+   Future<void> init(String appType) async {
+     _appType = appType;
+     final dylib = isAndroid
+-        ? DynamicLibrary.open('librustdesk.so')
++        ? DynamicLibrary.open('librdesk.so')
+         : isLinux
+-            ? DynamicLibrary.open('librustdesk.so')
++            ? DynamicLibrary.open('librdesk.so')
+             : isWindows
+-                ? DynamicLibrary.open('librustdesk.dll')
++                ? DynamicLibrary.open('librdesk.dll')
+                 :
+                 // Use executable itself as the dynamic library for MacOS.
+                 // Multiple dylib instances will cause some global instances to be invalid.
+                 // eg. `lazy_static` objects in rust side, will be created more than once, which is not expected.
+                 //
+-                // isMacOS? DynamicLibrary.open("liblibrustdesk.dylib") :
++                // isMacOS? DynamicLibrary.open("liblibrdesk.dylib") :
+                 DynamicLibrary.process();
+     debugPrint('initializing FFI $_appType');
+     try {
+diff --git a/flutter/linux/CMakeLists.txt b/flutter/linux/CMakeLists.txt
+index d320f403..0c717d25 100644
+--- a/flutter/linux/CMakeLists.txt
++++ b/flutter/linux/CMakeLists.txt
+@@ -131,9 +131,9 @@ set(RUSTDESK_LIB_BUILD_TYPE $<IF:$<CONFIG:Debug>,debug,release>)
+ string(TOLOWER ${CMAKE_BUILD_TYPE} ${RUSTDESK_LIB_BUILD_TYPE})
+ message(STATUS "rustdesk lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
+ 
+-set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/liblibrustdesk.so")
++set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/liblibrdesk.so")
+ install(FILES "${RUSTDESK_LIB}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+-COMPONENT Runtime RENAME librustdesk.so)
++COMPONENT Runtime RENAME librdesk.so)
+ 
+ # Fully re-copy the assets directory on each build to avoid having stale files
+ # from a previous install.
+diff --git a/flutter/linux/main.cc b/flutter/linux/main.cc
+index a7c0419c..bf711595 100644
+--- a/flutter/linux/main.cc
++++ b/flutter/linux/main.cc
+@@ -1,7 +1,7 @@
+ #include <dlfcn.h>
+ #include "my_application.h"
+ 
+-#define RUSTDESK_LIB_PATH "librustdesk.so"
++#define RUSTDESK_LIB_PATH "librdesk.so"
+ typedef bool (*RustDeskCoreMain)();
+ bool gIsConnectionManager = false;
+ 
+@@ -10,7 +10,7 @@ void print_help_install_pkg(const char* so);
+ bool flutter_rustdesk_core_main() {
+    void* librustdesk = dlopen(RUSTDESK_LIB_PATH, RTLD_LAZY);
+    if (!librustdesk) {
+-      fprintf(stderr,"Failed to load \"librustdesk.so\"\n");
++      fprintf(stderr,"Failed to load \"librdesk.so\"\n");
+       char* error;
+       if ((error = dlerror()) != nullptr) {
+         fprintf(stderr, "%s\n", error);
+diff --git a/flutter/windows/CMakeLists.txt b/flutter/windows/CMakeLists.txt
+index 926941b8..7cf7e1a8 100644
+--- a/flutter/windows/CMakeLists.txt
++++ b/flutter/windows/CMakeLists.txt
+@@ -1,10 +1,10 @@
+ # Project-level configuration.
+ cmake_minimum_required(VERSION 3.14)
+-project(rustdesk LANGUAGES CXX)
++project(rdesk LANGUAGES CXX)
+ 
+ # The name of the executable created for the application. Change this to change
+ # the on-disk name of your application.
+-set(BINARY_NAME "rustdesk")
++set(BINARY_NAME "rdesk")
+ 
+ # Explicitly opt into modern CMake behaviors to avoid warnings with recent
+ # versions of CMake.
+@@ -102,10 +102,10 @@ endif()
+ 
+ # flutter_rust_bridge
+ set(RUSTDESK_LIB_BUILD_TYPE $<IF:$<CONFIG:Debug>,debug,release>)
+-message(STATUS "rustdesk lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
+-set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/librustdesk.dll")
++message(STATUS "rdesk lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
++set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/librdesk.dll")
+ install(FILES "${RUSTDESK_LIB}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+-COMPONENT Runtime RENAME librustdesk.dll)
++COMPONENT Runtime RENAME librdesk.dll)
+ 
+ # Fully re-copy the assets directory on each build to avoid having stale files
+ # from a previous install.
+diff --git a/flutter/windows/runner/main.cpp b/flutter/windows/runner/main.cpp
+index cd9f386b..187796dc 100644
+--- a/flutter/windows/runner/main.cpp
++++ b/flutter/windows/runner/main.cpp
+@@ -22,10 +22,10 @@ const wchar_t* getWindowClassName();
+ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
+                       _In_ wchar_t *command_line, _In_ int show_command)
+ {
+-  HINSTANCE hInstance = LoadLibraryA("librustdesk.dll");
++  HINSTANCE hInstance = LoadLibraryA("librdesk.dll");
+   if (!hInstance)
+   {
+-    std::cout << "Failed to load librustdesk.dll." << std::endl;
++    std::cout << "Failed to load librdesk.dll." << std::endl;
+     return EXIT_FAILURE;
+   }
+   FUNC_RUSTDESK_CORE_MAIN rustdesk_core_main =
+diff --git a/libs/hbb_common b/libs/hbb_common
+--- a/libs/hbb_common
++++ b/libs/hbb_common
+@@ -1 +1 @@
+-Subproject commit 8d96dea2666a71b9ca9087c9b7b051bab9ce0ab3
++Subproject commit 8d96dea2666a71b9ca9087c9b7b051bab9ce0ab3-dirty
+diff --git a/libs/portable/app_metadata.toml b/libs/portable/app_metadata.toml
+index 2c0fb4a8..dc80bcdf 100644
+--- a/libs/portable/app_metadata.toml
++++ b/libs/portable/app_metadata.toml
+@@ -1 +1 @@
+-timestamp = 1771436295755
++timestamp = 1772078941640
+diff --git a/libs/portable/generate.py b/libs/portable/generate.py
+index 0116c2cd..505559be 100644
+--- a/libs/portable/generate.py
++++ b/libs/portable/generate.py
+@@ -92,7 +92,7 @@ if __name__ == '__main__':
+     output_folder = os.path.abspath(options.output_folder or './')
+ 
+     if not options.executable:
+-        options.executable = 'rustdesk.exe'
++        options.executable = 'rdesk.exe'
+     if not options.executable.startswith(folder):
+         options.executable = folder + '/' + options.executable
+     exe: str = os.path.abspath(options.executable)
+diff --git a/src/client.rs b/src/client.rs
+index 60cea334..5ce3cc7d 100644
+--- a/src/client.rs
++++ b/src/client.rs
+@@ -3920,7 +3920,6 @@ pub mod peer_online {
+         log,
+         rendezvous_proto::*,
+         sleep,
+-        socket_client::connect_tcp,
+         ResultType, Stream,
+     };
+ 
+@@ -3956,7 +3955,7 @@ pub mod peer_online {
+             bail!("Invalid server address: {}", rendezvous_server);
+         }
+         let online_server = format!("{}:{}", tmp[0], port - 1);
+-        connect_tcp(online_server, CONNECT_TIMEOUT).await
++        hbb_common::socket_client::connect_tcp_local(online_server, None, CONNECT_TIMEOUT).await
+     }
+ 
+     async fn query_online_states_(
+diff --git a/src/client/helper.rs b/src/client/helper.rs
+index b51b80f4..06d4ec7e 100644
+--- a/src/client/helper.rs
++++ b/src/client/helper.rs
+@@ -15,6 +15,7 @@ pub struct QualityStatus {
+     pub target_bitrate: Option<i32>,
+     pub codec_format: Option<CodecFormat>,
+     pub chroma: Option<String>,
++    pub connection_type: Option<String>,
+ }
+ 
+ #[inline]
+diff --git a/src/client/io_loop.rs b/src/client/io_loop.rs
+index 2535ca5e..b8574066 100644
+--- a/src/client/io_loop.rs
++++ b/src/client/io_loop.rs
+@@ -183,6 +183,11 @@ impl<T: InvokeUiSession> Remote<T> {
+                 self.handler
+                     .set_connection_type(peer.is_secured(), direct, stream_type); // flutter -> connection_ready
+                 self.handler.update_direct(Some(direct));
++                let connection_type_label = if direct {
++                    format!("Direct {}", stream_type)
++                } else {
++                    format!("Relay {}", stream_type)
++                };
+                 if conn_type == ConnType::DEFAULT_CONN || conn_type == ConnType::VIEW_CAMERA {
+                     self.handler
+                         .set_fingerprint(crate::common::pk_to_fingerprint(pk.unwrap_or_default()));
+@@ -327,6 +332,7 @@ impl<T: InvokeUiSession> Remote<T> {
+                                 decoder_type,
+                                 chroma,
+                                 codec_format,
++                                connection_type: Some(connection_type_label.clone()),
+                                 ..Default::default()
+                             });
+                         }
+diff --git a/src/common.rs b/src/common.rs
+index e42e1af8..2dd4453f 100644
+--- a/src/common.rs
++++ b/src/common.rs
+@@ -1008,7 +1008,7 @@ pub fn get_app_name() -> String {
+ /// Returns the actual binary name (without .exe), which may differ from the display app name.
+ #[inline]
+ pub fn get_exe_name() -> String {
+-    "rustdesk".to_owned()
++    "rdesk".to_owned()
+ }
+ 
+ #[inline]
+diff --git a/src/platform/windows.rs b/src/platform/windows.rs
+index 5dab9ed9..39b17a6e 100644
+--- a/src/platform/windows.rs
++++ b/src/platform/windows.rs
+@@ -2509,16 +2509,29 @@ pub(super) fn change_resolution_directly(
+ ) -> ResultType<()> {
+     let device_name = str_to_device_name(name);
+     unsafe {
++        // Read the current refresh rate so we can preserve it.
++        // Without this, CDS_RESET causes Windows to fall back to 60 Hz.
++        let mut cur: DEVMODEW = std::mem::zeroed();
++        cur.dmSize = std::mem::size_of::<DEVMODEW>() as _;
++        let freq = if EnumDisplaySettingsW(device_name.as_ptr(), ENUM_CURRENT_SETTINGS, &mut cur) != 0
++            && cur.dmDisplayFrequency > 1
++        {
++            cur.dmDisplayFrequency
++        } else {
++            60
++        };
++
+         let mut dm: DEVMODEW = std::mem::zeroed();
+         dm.dmSize = std::mem::size_of::<DEVMODEW>() as _;
+         dm.dmPelsWidth = width as _;
+         dm.dmPelsHeight = height as _;
+-        dm.dmFields = DM_PELSHEIGHT | DM_PELSWIDTH;
++        dm.dmDisplayFrequency = freq;
++        dm.dmFields = DM_PELSHEIGHT | DM_PELSWIDTH | DM_DISPLAYFREQUENCY;
+         let res = ChangeDisplaySettingsExW(
+             device_name.as_ptr(),
+             &mut dm,
+             NULL as _,
+-            CDS_UPDATEREGISTRY | CDS_GLOBAL | CDS_RESET,
++            CDS_UPDATEREGISTRY | CDS_GLOBAL,
+             NULL,
+         );
+         if res != DISP_CHANGE_SUCCESSFUL {
+diff --git a/src/plugin/callback_msg.rs b/src/plugin/callback_msg.rs
+index 2029162b..3bae3de7 100644
+--- a/src/plugin/callback_msg.rs
++++ b/src/plugin/callback_msg.rs
+@@ -15,7 +15,7 @@ use std::{
+     time::Duration,
+ };
+ 
+-const MSG_TO_RUSTDESK_TARGET: &str = "rustdesk";
++const MSG_TO_RUSTDESK_TARGET: &str = "rdesk";
+ const MSG_TO_PEER_TARGET: &str = "peer";
+ const MSG_TO_UI_TARGET: &str = "ui";
+ const MSG_TO_CONFIG_TARGET: &str = "config";
+diff --git a/src/rendezvous_mediator.rs b/src/rendezvous_mediator.rs
+index 5d26d338..5a662028 100644
+--- a/src/rendezvous_mediator.rs
++++ b/src/rendezvous_mediator.rs
+@@ -1,7 +1,7 @@
+ use std::{
+     net::SocketAddr,
+     sync::{
+-        atomic::{AtomicBool, Ordering},
++        atomic::{AtomicBool, AtomicUsize, Ordering},
+         Arc, RwLock,
+     },
+     time::{Duration, Instant},
+@@ -40,6 +40,8 @@ lazy_static::lazy_static! {
+ }
+ static SHOULD_EXIT: AtomicBool = AtomicBool::new(false);
+ static MANUAL_RESTARTED: AtomicBool = AtomicBool::new(false);
++static UDP_FAIL_COUNT: AtomicUsize = AtomicUsize::new(0);
++const UDP_FAIL_THRESHOLD: usize = 3; // UDP 连续失败 3 次后自动切 WS
+ 
+ #[derive(Clone)]
+ pub struct RendezvousMediator {
+@@ -292,8 +294,11 @@ impl RendezvousMediator {
+                     Ok(register_pk_response::Result::UUID_MISMATCH) => {
+                         self.handle_uuid_mismatch(sink).await?;
+                     }
+-                    _ => {
+-                        log::error!("unknown RegisterPkResponse");
++                    Ok(result) => {
++                        log::error!("RegisterPkResponse failed: {:?}", result);
++                    }
++                    Err(v) => {
++                        log::error!("RegisterPkResponse unknown value: {}", v);
+                     }
+                 }
+                 if rpr.keep_alive > 0 {
+@@ -384,11 +389,15 @@ impl RendezvousMediator {
+                     if last_recv_msg.elapsed().as_millis() as u64 > rz.keep_alive as u64 * 3 / 2 {
+                         bail!("Rendezvous connection is timeout");
+                     }
++                    let interval_elapsed = last_register_sent.map(|x| x.elapsed().as_millis() as i64).unwrap_or(REG_INTERVAL) >= REG_INTERVAL;
+                     if (!Config::get_key_confirmed() ||
+                         !Config::get_host_key_confirmed(&rz.host_prefix)) &&
+-                        last_register_sent.map(|x| x.elapsed().as_millis() as i64).unwrap_or(REG_INTERVAL) >= REG_INTERVAL {
++                        interval_elapsed {
+                         rz.register_pk(Sink::Stream(&mut conn)).await?;
+                         last_register_sent = Some(Instant::now());
++                    } else if interval_elapsed {
++                        rz.register_peer(Sink::Stream(&mut conn)).await?;
++                        last_register_sent = Some(Instant::now());
+                     }
+                 }
+             }
+@@ -398,15 +407,31 @@ impl RendezvousMediator {
+ 
+     pub async fn start(server: ServerPtr, host: String) -> ResultType<()> {
+         log::info!("start rendezvous mediator of {}", host);
+-        //If the investment agent type is http or https, then tcp forwarding is enabled.
++        // If proxy/ws forced/udp disabled, go TCP/WS directly
+         if (cfg!(debug_assertions) && option_env!("TEST_TCP").is_some())
+             || Config::is_proxy()
+             || use_ws()
+             || crate::is_udp_disabled()
+         {
+             Self::start_tcp(server, host).await
++        } else if UDP_FAIL_COUNT.load(Ordering::Relaxed) >= UDP_FAIL_THRESHOLD {
++            // UDP failed too many times, auto fallback to WS
++            log::info!("UDP failed {} times, auto using WebSocket", UDP_FAIL_COUNT.load(Ordering::Relaxed));
++            let result = Self::start_tcp(server, host).await;
++            // If WS also fails, reset counter to retry UDP next round
++            if result.is_err() {
++                UDP_FAIL_COUNT.store(0, Ordering::Relaxed);
++            }
++            result
+         } else {
+-            Self::start_udp(server, host).await
++            let result = Self::start_udp(server.clone(), host.clone()).await;
++            if result.is_err() {
++                let count = UDP_FAIL_COUNT.fetch_add(1, Ordering::Relaxed) + 1;
++                log::warn!("UDP failed ({}/{}), will fallback to WS if threshold reached", count, UDP_FAIL_THRESHOLD);
++            } else {
++                UDP_FAIL_COUNT.store(0, Ordering::Relaxed);
++            }
++            result
+         }
+     }
+ 
+diff --git a/src/server/video_qos.rs b/src/server/video_qos.rs
+index 95d134af..d5eb8bbc 100644
+--- a/src/server/video_qos.rs
++++ b/src/server/video_qos.rs
+@@ -206,6 +206,9 @@ impl VideoQoS {
+         if let Some(user) = self.users.get_mut(&id) {
+             user.custom_fps = Some(fps);
+         }
++        // Immediately recalculate so the new fps ceiling takes effect without
++        // waiting for the next network-delay message.
++        self.adjust_fps();
+     }
+ 
+     pub fn user_auto_adjust_fps(&mut self, id: i32, fps: u32) {
+@@ -394,7 +397,7 @@ impl VideoQoS {
+             .iter()
+             .map(|(_, u)| user_fps(u))
+             .filter(|u| *u >= MIN_FPS)
+-            .min()
++            .max()
+             .unwrap_or(FPS);
+ 
+         fps.clamp(MIN_FPS, MAX_FPS)
+@@ -514,6 +517,15 @@ impl VideoQoS {
+         let target_ratio = self.latest_quality().ratio();
+         let current_ratio = self.ratio;
+         
++        // [GAME MODE OPTIMIZATION]
++        // Detect game mode by the highest custom_fps any user has requested (not the min).
++        // highest_fps() is now max-based, so this is consistent.
++        let max_custom_fps = self.users.values()
++            .filter_map(|u| u.custom_fps)
++            .max()
++            .unwrap_or(0);
++        let is_game_mode = max_custom_fps >= 120 && target_ratio >= BR_BEST;
++        
+         // Consider congestion severe if response is delayed or ratio has bottomed out under bad network
+         let max_delay = self.users.iter().map(|u| u.1.delay.avg_delay()).max().unwrap_or(0);
+         let ratio_bottomed = current_ratio <= (target_ratio * 0.5).max(BR_MIN_HIGH_RESOLUTION);
+@@ -525,13 +537,27 @@ impl VideoQoS {
+                 // Decay FPS
+                 let badness_factor = (max_delay as f32 / DELAY_THRESHOLD_150MS as f32).min(5.0);
+                 target_fps = (fps as f32 / badness_factor).ceil() as u32;
++                
++                // [GAME MODE OPTIMIZATION] Do not let FPS drop severely in game mode
++                if is_game_mode {
++                    // In game mode, try to keep at least 60 FPS even if latency is somewhat high
++                    // Sacrifice image quality instead of FPS smoothness
++                    target_fps = target_fps.max(60);
++                }
+             } else if max_delay > 300 {
+                 // Very high latency spike, drop FPS slightly regardless of ratio
+                 target_fps = (fps as f32 * 0.8).ceil() as u32;
++                
++                // [GAME MODE OPTIMIZATION]
++                if is_game_mode {
++                    target_fps = target_fps.max(60);
++                }
+             }
+         } else if max_delay < DELAY_THRESHOLD_150MS && fps < init {
+-             // Recover FPS smoothly if network is good
+-             target_fps = (fps + 5).min(init);
++             // Recover FPS smoothly if network is good.
++             // Use a larger step when far below target to recover quickly after a bad-network user disconnects.
++             let step = if fps < init / 2 { (init - fps).min(20) } else { 5 };
++             target_fps = (fps + step).min(init);
+         }
+         
+         fps = target_fps.max(MIN_FPS + 1);
+diff --git a/src/server/video_service.rs b/src/server/video_service.rs
+index 18a747ce..63bc41db 100644
+--- a/src/server/video_service.rs
++++ b/src/server/video_service.rs
+@@ -657,6 +657,10 @@ fn run(vs: VideoService) -> ResultType<()> {
+     let mut encode_fail_counter = 0;
+     let mut first_frame = true;
+     let (mut second_instant, mut send_counter) = (Instant::now(), 0);
++    
++    // [EXTREME LOW BANDWIDTH] State for dynamic fps
++    let mut prev_y_data: Vec<u8> = Vec::new();
++    let mut current_dynamic_spf = Duration::from_millis(500); // Start with 2 FPS
+ 
+     while sp.ok() {
+         #[cfg(windows)]
+@@ -777,11 +781,65 @@ fn run(vs: VideoService) -> ResultType<()> {
+                         EncodeInput::Texture(t) => texture_data = Some(t),
+                     }
+                     
+-                    // [EXTREME LOW BANDWIDTH]: Monochrome / Grayscale transformation
++                    // [EXTREME LOW BANDWIDTH]: Monochrome / Grayscale transformation & Dynamic FPS
+                     // Strip UV color channels to drastically reduce encoder bitrate
+                     let extreme_low_bw = sp.is_option_true("extreme-low-bandwidth");
+                     if texture_data.is_none() && extreme_low_bw && yuv.len() > 0 {
+                         let y_len = encoder.yuvfmt().w as usize * encoder.yuvfmt().h as usize;
++                        
++                        // Dynamic FPS calculation based on Y channel diff
++                        if yuv.len() >= y_len {
++                            let current_y = yuv[0..y_len].to_vec();
++                            
++                            if !prev_y_data.is_empty() && prev_y_data.len() == y_len {
++                                // Sample every 16th pixel to save CPU
++                                let sample_step = 16;
++                                let mut diff_count = 0;
++                                let mut total_samples = 0;
++                                
++                                let mut i = 0;
++                                while i < y_len {
++                                    let diff = (current_y[i] as i32 - prev_y_data[i] as i32).abs();
++                                    if diff > 10 { // Threshold for pixel difference
++                                        diff_count += 1;
++                                    }
++                                    total_samples += 1;
++                                    i += sample_step;
++                                }
++                                
++                                let diff_ratio = if total_samples > 0 {
++                                    diff_count as f32 / total_samples as f32
++                                } else {
++                                    0.0
++                                };
++                                
++                                // Map diff_ratio to FPS (0.01 -> 2 FPS, 0.10 -> 10 FPS)
++                                let min_fps = 2.0;
++                                let max_fps = 10.0;
++                                let target_fps = if diff_ratio < 0.01 {
++                                    min_fps
++                                } else if diff_ratio > 0.10 {
++                                    max_fps
++                                } else {
++                                    // Linear interpolation
++                                    min_fps + (diff_ratio - 0.01) / 0.09 * (max_fps - min_fps)
++                                };
++                                
++                                let target_spf_ms = (1000.0 / target_fps) as u64;
++                                
++                                // EMA for smooth transition (alpha = 0.3)
++                                let current_ms = current_dynamic_spf.as_millis() as f64;
++                                let new_ms = current_ms * 0.7 + target_spf_ms as f64 * 0.3;
++                                current_dynamic_spf = Duration::from_millis(new_ms as u64);
++                            }
++                            
++                            // Save current Y data for next frame comparison (copy only if dimension matches to avoid allocations)
++                            if prev_y_data.len() != y_len {
++                                prev_y_data = vec![0; y_len];
++                            }
++                            prev_y_data.copy_from_slice(&current_y);
++                        }
++
+                         if yuv.len() > y_len {
+                             for b in yuv[y_len..].iter_mut() {
+                                 *b = 128; // Neutral gray
+@@ -912,8 +970,15 @@ fn run(vs: VideoService) -> ResultType<()> {
+         let elapsed = now.elapsed();
+         // may need to enable frame(timeout)
+         log::trace!("{:?} {:?}", time::Instant::now(), elapsed);
+-        if elapsed < spf {
+-            std::thread::sleep(spf - elapsed);
++        // [EXTREME LOW BANDWIDTH] Use dynamic SPF if enabled
++        let actual_spf = if sp.is_option_true("extreme-low-bandwidth") {
++            std::cmp::max(spf, current_dynamic_spf)
++        } else {
++            spf
++        };
++
++        if elapsed < actual_spf {
++            std::thread::sleep(actual_spf - elapsed);
+         }
+     }
+ 
+@@ -1350,12 +1415,12 @@ fn check_qos(
+     let mut video_qos = VIDEO_QOS.lock().unwrap();
+     *spf = video_qos.spf();
+     
+-    // [EXTREME LOW BANDWIDTH]: Override Frame Rate
++    // [EXTREME LOW BANDWIDTH]: Frame rate is now dynamically managed in the main loop
++    // But we still apply a baseline minimum cap here to prevent completely uncapped FPS
+     if extreme_low_bw {
+-        // Enforce 2 FPS max (500ms) to prevent network congestion
+-        let low_bw_spf = std::time::Duration::from_millis(500); 
+-        if *spf < low_bw_spf {
+-            *spf = low_bw_spf;
++        let max_bw_spf = std::time::Duration::from_millis(100); // Max 10 FPS
++        if *spf < max_bw_spf {
++            *spf = max_bw_spf;
+         }
+     }
+ 

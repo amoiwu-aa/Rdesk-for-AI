@@ -1,0 +1,20 @@
+﻿diff --git a/src/ui_session_interface.rs b/src/ui_session_interface.rs
+index 992d002f..b64031ac 100644
+--- a/src/ui_session_interface.rs
++++ b/src/ui_session_interface.rs
+@@ -523,13 +523,11 @@ impl<T: InvokeUiSession> Session<T> {
+             luid,
+             &mark_unsupported,
+         );
+-        let mut vp9 = decoder.ability_vp9 > 0;
+-        let mut av1 = false;
++        let vp9 = false;
++        let av1 = false;
+         let mut h264 = decoder.ability_h264 > 0;
+         let mut h265 = decoder.ability_h265 > 0;
+         let enc = &self.lc.read().unwrap().supported_encoding;
+-        vp9 = vp9 && true;
+-        av1 = av1 && enc.av1;
+         h264 = h264 && enc.h264;
+         h265 = h265 && enc.h265;
+         (vp9, av1, h264, h265)

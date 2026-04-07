@@ -1,0 +1,125 @@
+warning: direct cast of function item into an integer
+  --> libs\hbb_common\src\platform\mod.rs:80:62
+   |
+80 | ...akdown_signal_handler as _);
+   |                          ^^^^
+   |
+   = note: `#[warn(function_casts_as_integer)]` on by default
+help: first cast to a pointer `as *const ()`
+   |
+80 |         libc::signal(libc::SIGSEGV, breakdown_signal_handler as *const () as _);
+   |                                                              ++++++++++++
+
+warning: `hbb_common` (lib) generated 1 warning (run `cargo fix --lib -p hbb_common` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 1.26s
+warning: direct cast of function item into an integer
+  --> libs\hbb_common\src\platform\mod.rs:80:62
+   |
+80 | ...akdown_signal_handler as _);
+   |                          ^^^^
+   |
+   = note: `#[warn(function_casts_as_integer)]` on by default
+help: first cast to a pointer `as *const ()`
+   |
+80 |         libc::signal(libc::SIGSEGV, breakdown_signal_handler as *const () as _);
+   |                                                              ++++++++++++
+
+warning: `hbb_common` (lib) generated 1 warning (run `cargo fix --lib -p hbb_common` to apply 1 suggestion)
+warning: `hbb_common` (lib) generated 1 warning (1 duplicate)
+warning: unused import: `hbb_common::tokio::sync::mpsc::error::TryRecvError`
+  --> src\client\io_loop.rs:22:5
+   |
+22 | use hbb_common::tokio::sync::mpsc::error::TryRecvError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `self`
+  --> src\ipc.rs:28:16
+   |
+28 |         keys::{self, OPTION_ALLOW_WEBSOCKET},
+   |                ^^^^
+
+warning: unused import: `option2bool`
+  --> src\ui_cm_interface.rs:29:23
+   |
+29 |     config::{keys::*, option2bool},
+   |                       ^^^^^^^^^^^
+
+warning: use of deprecated function `hbb_common::base64::encode`: Use Engine::encode
+   --> src\hbbs_http\sync.rs:187:52
+    |
+187 | ...   hash = hbb_common::base64::encode(&res[..]);
+    |                                  ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: variable does not need to be mutable
+   --> src\server\terminal_helper.rs:817:9
+    |
+817 |     let mut input_pipe = open_pipe(input_pipe_name,...
+    |         ----^^^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> src\server\terminal_helper.rs:818:9
+    |
+818 |     let mut output_pipe = open_pipe(output_pipe_nam...
+    |         ----^^^^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `i`
+    --> src\common.rs:1568:9
+     |
+1568 |     for i in 0..2 {
+     |         ^ help: if this is intentional, prefix it with an underscore: `_i`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> src\client.rs:1488:21
+     |
+1488 |                 let mut having = lock.occupied_len();
+     |                     ----^^^^^^
+     |                     |
+     |                     help: remove this `mut`
+
+warning: unused variable: `info`
+    --> src\client.rs:1481:35
+     |
+1481 | ...|data: &mut [T], info: &cpal::OutputCallbackInf...
+     |                     ^^^^ help: if this is intentional, prefix it with an underscore: `_info`
+
+warning: variable does not need to be mutable
+  --> src\tray.rs:60:9
+   |
+60 |     let mut event_loop = EventLoopBuilder::new().bui...
+   |         ----^^^^^^^^^^
+   |         |
+   |         help: remove this `mut`
+
+warning: constant `MOUSE_MOVE_PROTECTION_TIMEOUT` is never used
+   --> src\server\input_service.rs:483:7
+    |
+483 | const MOUSE_MOVE_PROTECTION_TIMEOUT: Duration = Dur...
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MOUSE_ACTIVE_DISTANCE` is never used
+   --> src\server\input_service.rs:485:7
+    |
+485 | const MOUSE_ACTIVE_DISTANCE: i32 = 5;
+    |       ^^^^^^^^^^^^^^^^^^^^^
+
+warning: `rdesk` (lib) generated 12 warnings (run `cargo fix --lib -p rdesk` to apply 9 suggestions)
+    Finished `release` profile [optimized] target(s) in 1.28s
+'flutter' is not recognized as an internal or external command,
+operable program or batch file.
+Error occurred when executing: `flutter build windows --release`. Exiting.
+features: ['hwcodec', 'vram', 'flutter']
+False

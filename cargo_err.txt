@@ -1,0 +1,190 @@
+warning: unused import: `collections::HashSet`
+ --> src\server\service.rs:3:5
+  |
+3 |     collections::HashSet,
+  |     ^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `collections::HashSet`
+  --> src\server\video_service.rs:57:5
+   |
+57 |     collections::HashSet,
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `hbb_common::tokio::sync::mpsc::error::TryRecvError`
+  --> src\client\io_loop.rs:22:5
+   |
+22 | use hbb_common::tokio::sync::mpsc::error::TryRecvError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `self`
+  --> src\ipc.rs:28:16
+   |
+28 |         keys::{self, OPTION_ALLOW_WEBSOCKET},
+   |                ^^^^
+
+warning: unused import: `option2bool`
+  --> src\ui_cm_interface.rs:29:23
+   |
+29 |     config::{keys::*, option2bool},
+   |                       ^^^^^^^^^^^
+
+warning: use of deprecated function `hbb_common::base64::encode`: Use Engine::encode
+   --> src\hbbs_http\sync.rs:187:52
+    |
+187 | ...   hash = hbb_common::base64::encode(&res[..]);
+    |                                  ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: variable does not need to be mutable
+   --> src\server\terminal_helper.rs:817:9
+    |
+817 |     let mut input_pipe = open_pipe(input_pipe_name,...
+    |         ----^^^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> src\server\terminal_helper.rs:818:9
+    |
+818 |     let mut output_pipe = open_pipe(output_pipe_nam...
+    |         ----^^^^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `i`
+    --> src\common.rs:1568:9
+     |
+1568 |     for i in 0..2 {
+     |         ^ help: if this is intentional, prefix it with an underscore: `_i`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> src\client.rs:1488:21
+     |
+1488 |                 let mut having = lock.occupied_len();
+     |                     ----^^^^^^
+     |                     |
+     |                     help: remove this `mut`
+
+warning: unused variable: `info`
+    --> src\client.rs:1481:35
+     |
+1481 | ...|data: &mut [T], info: &cpal::OutputCallbackInf...
+     |                     ^^^^ help: if this is intentional, prefix it with an underscore: `_info`
+
+warning: variable does not need to be mutable
+  --> src\tray.rs:60:9
+   |
+60 |     let mut event_loop = EventLoopBuilder::new().bui...
+   |         ----^^^^^^^^^^
+   |         |
+   |         help: remove this `mut`
+
+warning: constant `MOUSE_MOVE_PROTECTION_TIMEOUT` is never used
+   --> src\server\input_service.rs:483:7
+    |
+483 | const MOUSE_MOVE_PROTECTION_TIMEOUT: Duration = Dur...
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MOUSE_ACTIVE_DISTANCE` is never used
+   --> src\server\input_service.rs:485:7
+    |
+485 | const MOUSE_ACTIVE_DISTANCE: i32 = 5;
+    |       ^^^^^^^^^^^^^^^^^^^^^
+
+warning: methods `http_request` and `get_http_status` are never used
+   --> src\ui.rs:605:8
+    |
+198 | impl UI {
+    | ------- methods in this implementation
+...
+605 |     fn http_request(&self, url: String, method: Str...
+    |        ^^^^^^^^^^^^
+...
+621 |     fn get_http_status(&self, url: String) -> Optio...
+    |        ^^^^^^^^^^^^^^^
+
+warning: static `CONTROLLING_SESSION_COUNT` is never used
+  --> src\updater.rs:23:8
+   |
+23 | static CONTROLLING_SESSION_COUNT: AtomicUsize = Atom...
+   |        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `update_controlling_session_count` is never used
+  --> src\updater.rs:27:8
+   |
+27 | pub fn update_controlling_session_count(count: usize) {
+   |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: enum `HbbHttpResponse` is never used
+  --> src\hbbs_http.rs:17:10
+   |
+17 | pub enum HbbHttpResponse<T> {
+   |          ^^^^^^^^^^^^^^^
+
+warning: struct `DownloadData` is never constructed
+  --> src\hbbs_http\downloader.rs:26:12
+   |
+26 | pub struct DownloadData {
+   |            ^^^^^^^^^^^^
+
+warning: struct `Downloader` is never constructed
+  --> src\hbbs_http\downloader.rs:38:8
+   |
+38 | struct Downloader {
+   |        ^^^^^^^^^^
+
+warning: function `download_file` is never used
+  --> src\hbbs_http\downloader.rs:50:8
+   |
+50 | pub fn download_file(
+   |        ^^^^^^^^^^^^^
+
+warning: function `do_download` is never used
+   --> src\hbbs_http\downloader.rs:128:10
+    |
+128 | async fn do_download(
+    |          ^^^^^^^^^^^
+
+warning: function `get_download_data` is never used
+   --> src\hbbs_http\downloader.rs:239:8
+    |
+239 | pub fn get_download_data(id: &str) -> ResultType<Do...
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: function `cancel` is never used
+   --> src\hbbs_http\downloader.rs:264:8
+    |
+264 | pub fn cancel(id: &str) {
+    |        ^^^^^^
+
+warning: function `remove` is never used
+   --> src\hbbs_http\downloader.rs:272:8
+    |
+272 | pub fn remove(id: &str) {
+    |        ^^^^^^
+
+warning: function `create_http_client_async_with_url` is never used
+   --> src\hbbs_http\http_client.rs:233:14
+    |
+233 | pub async fn create_http_client_async_with_url(url:...
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `create_http_client_async_with_url_` is never used
+   --> src\hbbs_http\http_client.rs:252:10
+    |
+252 | async fn create_http_client_async_with_url_(
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `rdesk` (lib) generated 27 warnings (run `cargo fix --lib -p rdesk` to apply 11 suggestions)
+src\service.rs:1:5: warning: unused import: `librdesk::*`
+warning: `rdesk` (bin "service") generated 1 warning (run `cargo fix --bin "service" -p rdesk` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.31s

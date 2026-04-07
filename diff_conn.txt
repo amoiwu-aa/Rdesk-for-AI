@@ -1,0 +1,32 @@
+﻿diff --git a/src/server/connection.rs b/src/server/connection.rs
+index 2222b663..cc8f342a 100644
+--- a/src/server/connection.rs
++++ b/src/server/connection.rs
+@@ -2068,10 +2068,10 @@ impl Connection {
+             if let Some(q) = o.supported_decoding.clone().take() {
+                 Encoder::update(Update(self.inner.id(), q));
+             } else {
+-                Encoder::update(NewOnlyVP9(self.inner.id()));
++                Encoder::update(Update(self.inner.id(), SupportedDecoding::new()));
+             }
+         } else {
+-            Encoder::update(NewOnlyVP9(self.inner.id()));
++            Encoder::update(Update(self.inner.id(), SupportedDecoding::new()));
+         }
+     }
+ 
+@@ -4596,13 +4596,11 @@ impl Connection {
+         let Some(usable) = usable else {
+             return;
+         };
+-        if usable.av1 != last.av1
+-            || usable.h264 != last.h264
++        if usable.h264 != last.h264
+             || usable.h265 != last.h265
+         {
+             let mut misc: Misc = Misc::new();
+             let supported_encoding = SupportedEncoding {
+-                av1: usable.av1,
+                 h264: usable.h264,
+                 h265: usable.h265,
+                 ..last.clone()

@@ -1,0 +1,38 @@
+﻿diff --git a/libs/scrap/src/common/vram.rs b/libs/scrap/src/common/vram.rs
+index b54e170c..9796f0e3 100644
+--- a/libs/scrap/src/common/vram.rs
++++ b/libs/scrap/src/common/vram.rs
+@@ -159,7 +159,6 @@ impl EncoderApi for VRamEncoder {
+             match self.format {
+                 DataFormat::H264 => vf.set_h264s(frames),
+                 DataFormat::H265 => vf.set_h265s(frames),
+-                DataFormat::AV1 => vf.set_av1s(frames),
+                 _ => bail!("{:?} not supported", self.format),
+             }
+             Ok(vf)
+@@ -245,7 +244,6 @@ impl VRamEncoder {
+         let data_format = match format {
+             CodecFormat::H264 => DataFormat::H264,
+             CodecFormat::H265 => DataFormat::H265,
+-            CodecFormat::AV1 => DataFormat::AV1,
+             _ => return vec![],
+         };
+         let v: Vec<_> = crate::hwcodec::HwCodecConfig::get()
+@@ -342,7 +340,6 @@ impl VRamDecoder {
+         let data_format = match format {
+             CodecFormat::H264 => DataFormat::H264,
+             CodecFormat::H265 => DataFormat::H265,
+-            CodecFormat::AV1 => DataFormat::AV1,
+             _ => return vec![],
+         };
+         crate::hwcodec::HwCodecConfig::get()
+@@ -359,8 +356,7 @@ impl VRamDecoder {
+         let v = crate::hwcodec::HwCodecConfig::get().vram_decode;
+         (
+             v.iter().any(|d| d.data_format == DataFormat::H264),
+-            v.iter()
+-                .any(|d| d.data_format == DataFormat::H265 || d.data_format == DataFormat::AV1),
++            v.iter().any(|d| d.data_format == DataFormat::H265),
+         )
+     }
+ 

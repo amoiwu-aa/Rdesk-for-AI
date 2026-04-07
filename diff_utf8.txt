@@ -1,0 +1,1073 @@
+﻿diff --git a/diff.txt b/diff.txt
+index 99c4d3ff..3d70a6ff 100644
+Binary files a/diff.txt and b/diff.txt differ
+diff --git a/libs/hbb_common b/libs/hbb_common
+--- a/libs/hbb_common
++++ b/libs/hbb_common
+@@ -1 +1 @@
+-Subproject commit 82be7f8094d6c305b5a8934cfa1d96c59eee17c5
++Subproject commit 82be7f8094d6c305b5a8934cfa1d96c59eee17c5-dirty
+diff --git a/libs/scrap/build.rs b/libs/scrap/build.rs
+index 73765055..3ba3a320 100644
+--- a/libs/scrap/build.rs
++++ b/libs/scrap/build.rs
+@@ -245,8 +245,6 @@ fn main() {
+     env::set_var("CARGO_CFG_TARGET_FEATURE", "crt-static");
+ 
+     find_package("libyuv");
+-    gen_vcpkg_package("libvpx", "vpx_ffi.h", "vpx_ffi.rs", "^[vV].*");
+-    gen_vcpkg_package("aom", "aom_ffi.h", "aom_ffi.rs", "^(aom|AOM|OBU|AV1).*");
+     gen_vcpkg_package("libyuv", "yuv_ffi.h", "yuv_ffi.rs", ".*");
+     // ffmpeg();
+ 
+diff --git a/libs/scrap/src/common/codec.rs b/libs/scrap/src/common/codec.rs
+index 22213c69..93f944fd 100644
+--- a/libs/scrap/src/common/codec.rs
++++ b/libs/scrap/src/common/codec.rs
+@@ -11,12 +11,7 @@ use crate::hwcodec::*;
+ use crate::mediacodec::{MediaCodecDecoder, H264_DECODER_SUPPORT, H265_DECODER_SUPPORT};
+ #[cfg(feature = "vram")]
+ use crate::vram::*;
+-use crate::{
+-    aom::{AomDecoder, AomEncoder, AomEncoderConfig},
+-    common::GoogleImage,
+-    vpxcodec::{VpxDecoder, VpxDecoderConfig, VpxEncoder, VpxEncoderConfig, VpxVideoCodecId},
+-    CodecFormat, EncodeInput, EncodeYuvFormat, ImageRgb, ImageTexture,
+-};
++use crate::{CodecFormat, EncodeInput, EncodeYuvFormat, ImageRgb, ImageTexture};
+ 
+ #[cfg(any(
+     feature = "hwcodec",
+@@ -27,7 +22,6 @@ use crate::{
+ use hbb_common::config::option2bool;
+ use hbb_common::{
+     anyhow::anyhow,
+-    bail,
+     config::{Config, PeerConfig},
+     lazy_static, log,
+     message_proto::{
+@@ -40,7 +34,7 @@ use hbb_common::{
+ 
+ lazy_static::lazy_static! {
+     static ref PEER_DECODINGS: Arc<Mutex<HashMap<i32, SupportedDecoding>>> = Default::default();
+-    static ref ENCODE_CODEC_FORMAT: Arc<Mutex<CodecFormat>> = Arc::new(Mutex::new(CodecFormat::VP9));
++    static ref ENCODE_CODEC_FORMAT: Arc<Mutex<CodecFormat>> = Arc::new(Mutex::new(CodecFormat::H264));
+     static ref THREAD_LOG_TIME: Arc<Mutex<Option<Instant>>> = Arc::new(Mutex::new(None));
+     static ref USABLE_ENCODING: Arc<Mutex<Option<SupportedEncoding>>> = Arc::new(Mutex::new(None));
+ }
+@@ -49,8 +43,6 @@ pub const ENCODE_NEED_SWITCH: &'static str = "ENCODE_NEED_SWITCH";
+ 
+ #[derive(Debug, Clone)]
+ pub enum EncoderCfg {
+-    VPX(VpxEncoderConfig),
+-    AOM(AomEncoderConfig),
+     #[cfg(feature = "hwcodec")]
+     HWRAM(HwRamEncoderConfig),
+     #[cfg(feature = "vram")]
+@@ -101,8 +93,6 @@ impl DerefMut for Encoder {
+ }
+ 
+ pub struct Decoder {
+-    vp9: Option<VpxDecoder>,
+-    av1: Option<AomDecoder>,
+     #[cfg(feature = "hwcodec")]
+     h264_ram: Option<HwRamDecoder>,
+     #[cfg(feature = "hwcodec")]
+@@ -125,7 +115,6 @@ pub struct Decoder {
+ pub enum EncodingUpdate {
+     Update(i32, SupportedDecoding),
+     Remove(i32),
+-    NewOnlyVP9(i32),
+     Check,
+ }
+ 
+@@ -133,13 +122,6 @@ impl Encoder {
+     pub fn new(config: EncoderCfg, i444: bool) -> ResultType<Encoder> {
+         log::info!("new encoder: {config:?}, i444: {i444}");
+         match config {
+-            EncoderCfg::VPX(_) => Ok(Encoder {
+-                codec: Box::new(VpxEncoder::new(config, i444)?),
+-            }),
+-            EncoderCfg::AOM(_) => Ok(Encoder {
+-                codec: Box::new(AomEncoder::new(config, i444)?),
+-            }),
+-
+             #[cfg(feature = "hwcodec")]
+             EncoderCfg::HWRAM(_) => match HwRamEncoder::new(config, i444) {
+                 Ok(hw) => Ok(Encoder {
+@@ -148,7 +130,7 @@ impl Encoder {
+                 Err(e) => {
+                     log::error!("new hw encoder failed: {e:?}, clear config");
+                     HwCodecConfig::clear(false, true);
+-                    *ENCODE_CODEC_FORMAT.lock().unwrap() = CodecFormat::VP9;
++                    *ENCODE_CODEC_FORMAT.lock().unwrap() = CodecFormat::H264;
+                     Err(e)
+                 }
+             },
+@@ -160,7 +142,7 @@ impl Encoder {
+                 Err(e) => {
+                     log::error!("new vram encoder failed: {e:?}, clear config");
+                     HwCodecConfig::clear(true, true);
+-                    *ENCODE_CODEC_FORMAT.lock().unwrap() = CodecFormat::VP9;
++                    *ENCODE_CODEC_FORMAT.lock().unwrap() = CodecFormat::H264;
+                     Err(e)
+                 }
+             },
+@@ -177,21 +159,9 @@ impl Encoder {
+             EncodingUpdate::Remove(id) => {
+                 decodings.remove(&id);
+             }
+-            EncodingUpdate::NewOnlyVP9(id) => {
+-                decodings.insert(
+-                    id,
+-                    SupportedDecoding {
+-                        ability_vp9: 1,
+-                        ..Default::default()
+-                    },
+-                );
+-            }
+             EncodingUpdate::Check => {}
+         }
+ 
+-        let av1_useable = decodings.len() > 0
+-            && decodings.iter().all(|(_, s)| s.ability_av1 > 0)
+-            && !disable_av1();
+         let _all_support_h264_decoding =
+             decodings.len() > 0 && decodings.iter().all(|(_, s)| s.ability_h264 > 0);
+         let _all_support_h265_decoding =
+@@ -236,15 +206,12 @@ impl Encoder {
+         let preferences: Vec<_> = decodings
+             .iter()
+             .filter(|(_, s)| {
+-                s.prefer == PreferCodec::VP9.into()
+-                    || s.prefer == PreferCodec::AV1.into() && av1_useable
+-                    || s.prefer == PreferCodec::H264.into() && h264_useable
++                s.prefer == PreferCodec::H264.into() && h264_useable
+                     || s.prefer == PreferCodec::H265.into() && h265_useable
+             })
+             .map(|(_, s)| s.prefer)
+             .collect();
+         *USABLE_ENCODING.lock().unwrap() = Some(SupportedEncoding {
+-            av1: av1_useable,
+             h264: h264_useable,
+             h265: h265_useable,
+             ..Default::default()
+@@ -264,46 +231,31 @@ impl Encoder {
+             .unwrap_or((PreferCodec::Auto.into(), 0));
+         let preference = most_frequent.enum_value_or(PreferCodec::Auto);
+ 
+-        // auto: h265 > h264 > av1/vp9/vp8
+-        let av1_test = Config::get_option(hbb_common::config::keys::OPTION_AV1_TEST) != "N";
+-        let mut auto_codec = if av1_useable && av1_test {
+-            CodecFormat::AV1
+-        } else {
+-            CodecFormat::VP9
+-        };
+-        if h264_useable {
+-            auto_codec = CodecFormat::H264;
+-        }
++        // auto: prefer stable H265 > H264 only
++        let mut auto_codec = CodecFormat::H264;
+         if h265_useable {
+             auto_codec = CodecFormat::H265;
+-        }
+-        if auto_codec == CodecFormat::VP9 || auto_codec == CodecFormat::AV1 {
+-            // (Memory checking fallbacks for VP8 removed)
++        } else if h264_useable {
++            auto_codec = CodecFormat::H264;
+         }
+ 
+-        *format = match preference {
+-            PreferCodec::VP9 => CodecFormat::VP9,
+-            PreferCodec::AV1 => CodecFormat::AV1,
+-            PreferCodec::H264 => {
+-                if h264vram_encoding || h264hw_encoding.is_some() {
+-                    CodecFormat::H264
+-                } else {
+-                    auto_codec
+-                }
++        *format = if preference == PreferCodec::H264 {
++            if h264vram_encoding || h264hw_encoding.is_some() {
++                CodecFormat::H264
++            } else {
++                auto_codec
+             }
+-            PreferCodec::H265 => {
+-                if h265vram_encoding || h265hw_encoding.is_some() {
+-                    CodecFormat::H265
+-                } else {
+-                    auto_codec
+-                }
++        } else if preference == PreferCodec::H265 {
++            if h265vram_encoding || h265hw_encoding.is_some() {
++                CodecFormat::H265
++            } else {
++                auto_codec
+             }
+-            PreferCodec::Auto => auto_codec,
++        } else {
++            auto_codec
+         };
+         if decodings.len() > 0 {
+-            log::info!(
+-                "usable: vp8=false, av1={av1_useable}, h264={h264_useable}, h265={h265_useable}",
+-            );
++            log::info!("usable: h264={h264_useable}, h265={h265_useable}",);
+             log::info!(
+                 "connection count: {}, used preference: {:?}, encoder: {:?}",
+                 decodings.len(),
+@@ -321,10 +273,7 @@ impl Encoder {
+     pub fn supported_encoding() -> SupportedEncoding {
+         #[allow(unused_mut)]
+         let mut encoding = SupportedEncoding {
+-            av1: !disable_av1(),
+             i444: Some(CodecAbility {
+-                vp9: true,
+-                av1: true,
+                 ..Default::default()
+             })
+             .into(),
+@@ -348,26 +297,24 @@ impl Encoder {
+     }
+ 
+     pub fn set_fallback(config: &EncoderCfg) {
+-        let format = match config {
+-            EncoderCfg::VPX(vpx) => match vpx.codec {
+-                VpxVideoCodecId::VP9 => CodecFormat::VP9,
+-            },
+-            EncoderCfg::AOM(_) => CodecFormat::AV1,
+-            #[cfg(feature = "hwcodec")]
+-            EncoderCfg::HWRAM(hw) => {
+-                let name = hw.name.to_lowercase();
+-                if name.contains("vp9") {
+-                    CodecFormat::VP9
+-                } else if name.contains("av1") {
+-                    CodecFormat::AV1
+-                } else if name.contains("h264") {
+-                    CodecFormat::H264
+-                } else {
+-                    CodecFormat::H265
+-                }
++        #[cfg(feature = "hwcodec")]
++        if let EncoderCfg::HWRAM(hw) = config {
++            let format = if hw.name.to_lowercase().contains("h264") {
++                CodecFormat::H264
++            } else {
++                CodecFormat::H265
++            };
++            let current = ENCODE_CODEC_FORMAT.lock().unwrap().clone();
++            if current != format {
++                log::info!("codec fallback: {:?} -> {:?}", current, format);
++                *ENCODE_CODEC_FORMAT.lock().unwrap() = format;
+             }
+-            #[cfg(feature = "vram")]
+-            EncoderCfg::VRAM(vram) => match vram.feature.data_format {
++            return;
++        }
++
++        #[cfg(feature = "vram")]
++        if let EncoderCfg::VRAM(vram) = config {
++            let format = match vram.feature.data_format {
+                 hwcodec::common::DataFormat::H264 => CodecFormat::H264,
+                 hwcodec::common::DataFormat::H265 => CodecFormat::H265,
+                 _ => {
+@@ -377,8 +324,16 @@ impl Encoder {
+                     );
+                     return;
+                 }
+-            },
+-        };
++            };
++            let current = ENCODE_CODEC_FORMAT.lock().unwrap().clone();
++            if current != format {
++                log::info!("codec fallback: {:?} -> {:?}", current, format);
++                *ENCODE_CODEC_FORMAT.lock().unwrap() = format;
++            }
++            return;
++        }
++
++        let format = CodecFormat::H264;
+         let current = ENCODE_CODEC_FORMAT.lock().unwrap().clone();
+         if current != format {
+             log::info!("codec fallback: {:?} -> {:?}", current, format);
+@@ -386,21 +341,12 @@ impl Encoder {
+         }
+     }
+ 
+-    pub fn use_i444(config: &EncoderCfg) -> bool {
++    pub fn use_i444(_config: &EncoderCfg) -> bool {
+         let decodings = PEER_DECODINGS.lock().unwrap().clone();
+         let prefer_i444 = decodings
+             .iter()
+             .all(|d| d.1.prefer_chroma == Chroma::I444.into());
+-        let i444_useable = match config {
+-            EncoderCfg::VPX(vpx) => match vpx.codec {
+-                VpxVideoCodecId::VP9 => decodings.iter().all(|d| d.1.i444.vp9),
+-            },
+-            EncoderCfg::AOM(_) => decodings.iter().all(|d| d.1.i444.av1),
+-            #[cfg(feature = "hwcodec")]
+-            EncoderCfg::HWRAM(_) => false,
+-            #[cfg(feature = "vram")]
+-            EncoderCfg::VRAM(_) => false,
+-        };
++        let i444_useable = false;
+         prefer_i444 && i444_useable && !decodings.is_empty()
+     }
+ }
+@@ -416,11 +362,7 @@ impl Decoder {
+ 
+         #[allow(unused_mut)]
+         let mut decoding = SupportedDecoding {
+-            ability_vp9: 1,
+-            ability_av1: if disable_av1() { 0 } else { 1 },
+             i444: Some(CodecAbility {
+-                vp9: true,
+-                av1: true,
+                 ..Default::default()
+             })
+             .into(),
+@@ -471,8 +413,6 @@ impl Decoder {
+         }
+         for unsupported in mark_unsupported {
+             match unsupported {
+-                CodecFormat::VP9 => decoding.ability_vp9 = 0,
+-                CodecFormat::AV1 => decoding.ability_av1 = 0,
+                 CodecFormat::H264 => decoding.ability_h264 = 0,
+                 CodecFormat::H265 => decoding.ability_h265 = 0,
+                 _ => {}
+@@ -483,7 +423,6 @@ impl Decoder {
+ 
+     pub fn new(format: CodecFormat, _luid: Option<i64>) -> Decoder {
+         log::info!("try create new decoder, format: {format:?}, _luid: {_luid:?}");
+-        let (mut vp9, mut av1) = (None, None);
+         #[cfg(feature = "hwcodec")]
+         let (mut h264_ram, mut h265_ram) = (None, None);
+         #[cfg(feature = "vram")]
+@@ -493,26 +432,6 @@ impl Decoder {
+         let mut valid = false;
+ 
+         match format {
+-            CodecFormat::VP8 => {
+-                log::warn!("VP8 decoder path is disabled; falling back to other supported codecs");
+-                valid = false;
+-            }
+-            CodecFormat::VP9 => {
+-                match VpxDecoder::new(VpxDecoderConfig {
+-                    codec: VpxVideoCodecId::VP9,
+-                }) {
+-                    Ok(v) => vp9 = Some(v),
+-                    Err(e) => log::error!("create VP9 decoder failed: {}", e),
+-                }
+-                valid = vp9.is_some();
+-            }
+-            CodecFormat::AV1 => {
+-                match AomDecoder::new() {
+-                    Ok(v) => av1 = Some(v),
+-                    Err(e) => log::error!("create AV1 decoder failed: {}", e),
+-                }
+-                valid = av1.is_some();
+-            }
+             CodecFormat::H264 => {
+                 #[cfg(feature = "vram")]
+                 if !valid && enable_vram_option(false) && _luid.clone().unwrap_or_default() != 0 {
+@@ -603,8 +522,6 @@ impl Decoder {
+             log::info!("create {format:?} decoder success");
+         }
+         Decoder {
+-            vp9,
+-            av1,
+             #[cfg(feature = "hwcodec")]
+             h264_ram,
+             #[cfg(feature = "hwcodec")]
+@@ -664,20 +581,6 @@ impl Decoder {
+         chroma: &mut Option<Chroma>,
+     ) -> ResultType<bool> {
+         match frame {
+-            video_frame::Union::Vp9s(vp9s) => {
+-                if let Some(vp9) = &mut self.vp9 {
+-                    Decoder::handle_vpxs_video_frame(vp9, vp9s, rgb, chroma)
+-                } else {
+-                    bail!("vp9 decoder not available");
+-                }
+-            }
+-            video_frame::Union::Av1s(av1s) => {
+-                if let Some(av1) = &mut self.av1 {
+-                    Decoder::handle_av1s_video_frame(av1, av1s, rgb, chroma)
+-                } else {
+-                    bail!("av1 decoder not available");
+-                }
+-            }
+             #[cfg(any(feature = "hwcodec", feature = "vram"))]
+             video_frame::Union::H264s(h264s) => {
+                 *chroma = Some(Chroma::I420);
+@@ -728,50 +631,6 @@ impl Decoder {
+         }
+     }
+ 
+-    // rgb [in/out] fmt and stride must be set in ImageRgb
+-    fn handle_vpxs_video_frame(
+-        decoder: &mut VpxDecoder,
+-        vpxs: &EncodedVideoFrames,
+-        rgb: &mut ImageRgb,
+-        chroma: &mut Option<Chroma>,
+-    ) -> ResultType<bool> {
+-        let mut decoded = false;
+-        for vpx in vpxs.frames.iter() {
+-            for frame in decoder.decode(&vpx.data)? {
+-                *chroma = Some(frame.chroma());
+-                frame.to(rgb);
+-                decoded = true;
+-            }
+-        }
+-        if !decoded {
+-            Ok(false)
+-        } else {
+-            Ok(true)
+-        }
+-    }
+-
+-    // rgb [in/out] fmt and stride must be set in ImageRgb
+-    fn handle_av1s_video_frame(
+-        decoder: &mut AomDecoder,
+-        av1s: &EncodedVideoFrames,
+-        rgb: &mut ImageRgb,
+-        chroma: &mut Option<Chroma>,
+-    ) -> ResultType<bool> {
+-        let mut decoded = false;
+-        for av1 in av1s.frames.iter() {
+-            for frame in decoder.decode(&av1.data)? {
+-                *chroma = Some(frame.chroma());
+-                frame.to(rgb);
+-                decoded = true;
+-            }
+-        }
+-        if !decoded {
+-            Ok(false)
+-        } else {
+-            Ok(true)
+-        }
+-    }
+-
+     // rgb [in/out] fmt and stride must be set in ImageRgb
+     #[cfg(feature = "hwcodec")]
+     fn handle_hwram_video_frame(
+@@ -835,11 +694,7 @@ impl Decoder {
+         let codec = options
+             .get("codec-preference")
+             .map_or("".to_owned(), |c| c.to_owned());
+-        let codec = if codec == "vp9" {
+-            PreferCodec::VP9
+-        } else if codec == "av1" {
+-            PreferCodec::AV1
+-        } else if codec == "h264" {
++        let codec = if codec == "h264" {
+             PreferCodec::H264
+         } else if codec == "h265" {
+             PreferCodec::H265
+@@ -1038,129 +893,3 @@ pub fn codec_thread_num(limit: usize) -> usize {
+     }
+     res
+ }
+-
+-fn disable_av1() -> bool {
+-    // aom is very slow for x86 sciter version on windows x64
+-    // disable it for all 32 bit platforms
+-    std::mem::size_of::<usize>() == 4
+-}
+-
+-#[cfg(not(target_os = "ios"))]
+-pub fn test_av1() {
+-    use hbb_common::config::keys::OPTION_AV1_TEST;
+-    use hbb_common::rand::Rng;
+-    use std::{sync::Once, time::Duration};
+-
+-    if disable_av1() || !Config::get_option(OPTION_AV1_TEST).is_empty() {
+-        log::info!("skip test av1");
+-        return;
+-    }
+-
+-    static ONCE: Once = Once::new();
+-    ONCE.call_once(|| {
+-        let f = || {
+-            let (width, height, quality, keyframe_interval, i444) = (1920, 1080, 1.0, None, false);
+-            let frame_count = 10;
+-            let block_size = 300;
+-            let move_step = 50;
+-            let generate_fake_data =
+-                |frame_index: u32, dst_fmt: EncodeYuvFormat| -> ResultType<Vec<u8>> {
+-                    let mut rng = hbb_common::rand::thread_rng();
+-                    let mut bgra = vec![0u8; (width * height * 4) as usize];
+-                    let gradient = frame_index as f32 / frame_count as f32;
+-                    // floating block
+-                    let x0 = (frame_index * move_step) % (width - block_size);
+-                    let y0 = (frame_index * move_step) % (height - block_size);
+-                    // Fill the block with random colors
+-                    for y in 0..block_size {
+-                        for x in 0..block_size {
+-                            let index = (((y0 + y) * width + x0 + x) * 4) as usize;
+-                            if index + 3 < bgra.len() {
+-                                let noise = rng.gen_range(0..255) as f32 / 255.0;
+-                                let value = (255.0 * gradient + noise * 50.0) as u8;
+-                                bgra[index] = value;
+-                                bgra[index + 1] = value;
+-                                bgra[index + 2] = value;
+-                                bgra[index + 3] = 255;
+-                            }
+-                        }
+-                    }
+-                    let dst_stride_y = dst_fmt.stride[0];
+-                    let dst_stride_uv = dst_fmt.stride[1];
+-                    let mut dst = vec![0u8; (dst_fmt.h * dst_stride_y * 2) as usize];
+-                    let dst_y = dst.as_mut_ptr();
+-                    let dst_u = dst[dst_fmt.u..].as_mut_ptr();
+-                    let dst_v = dst[dst_fmt.v..].as_mut_ptr();
+-                    let res = unsafe {
+-                        crate::ARGBToI420(
+-                            bgra.as_ptr(),
+-                            (width * 4) as _,
+-                            dst_y,
+-                            dst_stride_y as _,
+-                            dst_u,
+-                            dst_stride_uv as _,
+-                            dst_v,
+-                            dst_stride_uv as _,
+-                            width as _,
+-                            height as _,
+-                        )
+-                    };
+-                    if res != 0 {
+-                        bail!("ARGBToI420 failed: {}", res);
+-                    }
+-                    Ok(dst)
+-                };
+-            let Ok(mut av1) = AomEncoder::new(
+-                EncoderCfg::AOM(AomEncoderConfig {
+-                    width,
+-                    height,
+-                    quality,
+-                    keyframe_interval,
+-                }),
+-                i444,
+-            ) else {
+-                return false;
+-            };
+-            let mut key_frame_time = Duration::ZERO;
+-            let mut non_key_frame_time_sum = Duration::ZERO;
+-            let pts = Instant::now();
+-            let yuvfmt = av1.yuvfmt().clone();
+-            for i in 0..frame_count {
+-                let Ok(yuv) = generate_fake_data(i, yuvfmt.clone()) else {
+-                    return false;
+-                };
+-                let start = Instant::now();
+-                if av1
+-                    .encode(pts.elapsed().as_millis() as _, &yuv, super::STRIDE_ALIGN)
+-                    .is_err()
+-                {
+-                    log::debug!("av1 encode failed");
+-                    if i == 0 {
+-                        return false;
+-                    }
+-                }
+-                if i == 0 {
+-                    key_frame_time = start.elapsed();
+-                } else {
+-                    non_key_frame_time_sum += start.elapsed();
+-                }
+-            }
+-            let non_key_frame_time = non_key_frame_time_sum / (frame_count - 1);
+-            log::info!(
+-                "av1 time: key: {:?}, non-key: {:?}, consume: {:?}",
+-                key_frame_time,
+-                non_key_frame_time,
+-                pts.elapsed()
+-            );
+-            key_frame_time < Duration::from_millis(90)
+-                && non_key_frame_time < Duration::from_millis(30)
+-        };
+-        std::thread::spawn(move || {
+-            let v = f();
+-            Config::set_option(
+-                OPTION_AV1_TEST.to_string(),
+-                if v { "Y" } else { "N" }.to_string(),
+-            );
+-        });
+-    });
+-}
+diff --git a/libs/scrap/src/common/hwcodec.rs b/libs/scrap/src/common/hwcodec.rs
+index 8f4093ae..71b6470d 100644
+--- a/libs/scrap/src/common/hwcodec.rs
++++ b/libs/scrap/src/common/hwcodec.rs
+@@ -226,11 +226,6 @@ impl HwRamEncoder {
+                     info = Some(v);
+                 }
+             }
+-            CodecFormat::AV1 => {
+-                if let Some(v) = best.av1 {
+-                    info = Some(v);
+-                }
+-            }
+             _ => {}
+         }
+         info
+@@ -339,11 +334,6 @@ impl HwRamDecoder {
+                     info = Some(v);
+                 }
+             }
+-            CodecFormat::AV1 => {
+-                if let Some(v) = soft.av1 {
+-                    info = Some(v);
+-                }
+-            }
+             _ => {}
+         }
+         if enable_hwcodec_option() {
+@@ -359,11 +349,6 @@ impl HwRamDecoder {
+                         info = Some(v);
+                     }
+                 }
+-                CodecFormat::AV1 => {
+-                    if let Some(v) = best.av1 {
+-                        info = Some(v);
+-                    }
+-                }
+                 _ => {}
+             }
+         }
+diff --git a/libs/scrap/src/common/mod.rs b/libs/scrap/src/common/mod.rs
+index 8005ab4b..b9ebfd51 100644
+--- a/libs/scrap/src/common/mod.rs
++++ b/libs/scrap/src/common/mod.rs
+@@ -1,4 +1,3 @@
+-pub use self::vpxcodec::*;
+ use hbb_common::{
+     bail, log,
+     message_proto::{video_frame, Chroma, VideoFrame},
+@@ -45,18 +44,15 @@ pub mod convert;
+ pub mod hwcodec;
+ #[cfg(feature = "mediacodec")]
+ pub mod mediacodec;
+-pub mod vpxcodec;
+ #[cfg(feature = "vram")]
+ pub mod vram;
+ pub use self::convert::*;
+ pub const STRIDE_ALIGN: usize = 64; // commonly used in libvpx vpx_img_alloc caller
+ pub const HW_STRIDE_ALIGN: usize = 0; // recommended by av_frame_get_buffer
+ 
+-pub mod aom;
+ #[cfg(not(any(target_os = "ios")))]
+ pub mod camera;
+ pub mod record;
+-mod vpx;
+ 
+ #[repr(usize)]
+ #[derive(Debug, Copy, Clone)]
+@@ -305,9 +301,6 @@ pub fn is_cursor_embedded() -> bool {
+ 
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub enum CodecName {
+-    VP8,
+-    VP9,
+-    AV1,
+     H264RAM(String),
+     H265RAM(String),
+     H264VRAM,
+@@ -316,9 +309,6 @@ pub enum CodecName {
+ 
+ #[derive(PartialEq, Debug, Clone, Copy)]
+ pub enum CodecFormat {
+-    VP8,
+-    VP9,
+-    AV1,
+     H264,
+     H265,
+     Unknown,
+@@ -327,8 +317,6 @@ pub enum CodecFormat {
+ impl From<&VideoFrame> for CodecFormat {
+     fn from(it: &VideoFrame) -> Self {
+         match it.union {
+-            Some(video_frame::Union::Vp9s(_)) => CodecFormat::VP9,
+-            Some(video_frame::Union::Av1s(_)) => CodecFormat::AV1,
+             Some(video_frame::Union::H264s(_)) => CodecFormat::H264,
+             Some(video_frame::Union::H265s(_)) => CodecFormat::H265,
+             _ => CodecFormat::Unknown,
+@@ -339,8 +327,6 @@ impl From<&VideoFrame> for CodecFormat {
+ impl From<&video_frame::Union> for CodecFormat {
+     fn from(it: &video_frame::Union) -> Self {
+         match it {
+-            video_frame::Union::Vp9s(_) => CodecFormat::VP9,
+-            video_frame::Union::Av1s(_) => CodecFormat::AV1,
+             video_frame::Union::H264s(_) => CodecFormat::H264,
+             video_frame::Union::H265s(_) => CodecFormat::H265,
+             _ => CodecFormat::Unknown,
+@@ -351,9 +337,6 @@ impl From<&video_frame::Union> for CodecFormat {
+ impl From<&CodecName> for CodecFormat {
+     fn from(value: &CodecName) -> Self {
+         match value {
+-            CodecName::VP8 => Self::VP8,
+-            CodecName::VP9 => Self::VP9,
+-            CodecName::AV1 => Self::AV1,
+             CodecName::H264RAM(_) | CodecName::H264VRAM => Self::H264,
+             CodecName::H265RAM(_) | CodecName::H265VRAM => Self::H265,
+         }
+@@ -363,9 +346,6 @@ impl From<&CodecName> for CodecFormat {
+ impl ToString for CodecFormat {
+     fn to_string(&self) -> String {
+         match self {
+-            CodecFormat::VP8 => "VP8".into(),
+-            CodecFormat::VP9 => "VP9".into(),
+-            CodecFormat::AV1 => "AV1".into(),
+             CodecFormat::H264 => "H264".into(),
+             CodecFormat::H265 => "H265".into(),
+             CodecFormat::Unknown => "Unknown".into(),
+diff --git a/libs/scrap/src/common/record.rs b/libs/scrap/src/common/record.rs
+index 12ebac61..06f7b7d3 100644
+--- a/libs/scrap/src/common/record.rs
++++ b/libs/scrap/src/common/record.rs
+@@ -9,14 +9,11 @@ use hbb_common::{
+ #[cfg(feature = "hwcodec")]
+ use hwcodec::mux::{MuxContext, Muxer};
+ use std::{
+-    fs::{File, OpenOptions},
+-    io,
+     ops::{Deref, DerefMut},
+     path::PathBuf,
+     sync::mpsc::Sender,
+     time::Instant,
+ };
+-use webm::mux::{self, Segment, Track, VideoTrack, Writer};
+ 
+ const MIN_SECS: u64 = 1;
+ 
+@@ -53,14 +50,7 @@ impl RecorderContext2 {
+                 ctx.display_idx
+             )
+             + &self.format.to_string().to_lowercase()
+-            + if self.format == CodecFormat::VP9
+-                || self.format == CodecFormat::VP8
+-                || self.format == CodecFormat::AV1
+-            {
+-                ".webm"
+-            } else {
+-                ".mp4"
+-            };
++            + ".mp4";
+         self.filename = PathBuf::from(&ctx.dir)
+             .join(file)
+             .to_string_lossy()
+@@ -152,9 +142,6 @@ impl Recorder {
+         };
+         if self.inner.is_none() {
+             self.inner = match format {
+-                CodecFormat::VP8 | CodecFormat::VP9 | CodecFormat::AV1 => Some(Box::new(
+-                    WebmRecorder::new(self.ctx.clone(), (*ctx2).clone())?,
+-                )),
+                 #[cfg(feature = "hwcodec")]
+                 _ => Some(Box::new(HwRecorder::new(
+                     self.ctx.clone(),
+@@ -198,18 +185,6 @@ impl Recorder {
+             res?;
+         }
+         match frame {
+-            video_frame::Union::Vp9s(vp9s) => {
+-                for f in vp9s.frames.iter() {
+-                    self.check_pts(f.pts, f.key, w, h, format)?;
+-                    self.as_mut().map(|x| x.write_video(f));
+-                }
+-            }
+-            video_frame::Union::Av1s(av1s) => {
+-                for f in av1s.frames.iter() {
+-                    self.check_pts(f.pts, f.key, w, h, format)?;
+-                    self.as_mut().map(|x| x.write_video(f));
+-                }
+-            }
+             #[cfg(feature = "hwcodec")]
+             video_frame::Union::H264s(h264s) => {
+                 for f in h264s.frames.iter() {
+@@ -264,92 +239,6 @@ impl Recorder {
+     }
+ }
+ 
+-struct WebmRecorder {
+-    vt: VideoTrack,
+-    webm: Option<Segment<Writer<File>>>,
+-    ctx: RecorderContext,
+-    ctx2: RecorderContext2,
+-    key: bool,
+-    written: bool,
+-    start: Instant,
+-}
+-
+-impl RecorderApi for WebmRecorder {
+-    fn new(ctx: RecorderContext, ctx2: RecorderContext2) -> ResultType<Self> {
+-        let out = match {
+-            OpenOptions::new()
+-                .write(true)
+-                .create_new(true)
+-                .open(&ctx2.filename)
+-        } {
+-            Ok(file) => file,
+-            Err(ref e) if e.kind() == io::ErrorKind::AlreadyExists => File::create(&ctx2.filename)?,
+-            Err(e) => return Err(e.into()),
+-        };
+-        let mut webm = match mux::Segment::new(mux::Writer::new(out)) {
+-            Some(v) => v,
+-            None => bail!("Failed to create webm mux"),
+-        };
+-        let vt = webm.add_video_track(
+-            ctx2.width as _,
+-            ctx2.height as _,
+-            None,
+-            if ctx2.format == CodecFormat::VP9 {
+-                mux::VideoCodecId::VP9
+-            } else if ctx2.format == CodecFormat::VP8 {
+-                mux::VideoCodecId::VP8
+-            } else {
+-                mux::VideoCodecId::AV1
+-            },
+-        );
+-        if ctx2.format == CodecFormat::AV1 {
+-            // [129, 8, 12, 0] in 3.6.0, but zero works
+-            let codec_private = vec![0, 0, 0, 0];
+-            if !webm.set_codec_private(vt.track_number(), &codec_private) {
+-                bail!("Failed to set codec private");
+-            }
+-        }
+-        Ok(WebmRecorder {
+-            vt,
+-            webm: Some(webm),
+-            ctx,
+-            ctx2,
+-            key: false,
+-            written: false,
+-            start: Instant::now(),
+-        })
+-    }
+-
+-    fn write_video(&mut self, frame: &EncodedVideoFrame) -> bool {
+-        if frame.key {
+-            self.key = true;
+-        }
+-        if self.key {
+-            let ok = self
+-                .vt
+-                .add_frame(&frame.data, frame.pts as u64 * 1_000_000, frame.key);
+-            if ok {
+-                self.written = true;
+-            }
+-            ok
+-        } else {
+-            false
+-        }
+-    }
+-}
+-
+-impl Drop for WebmRecorder {
+-    fn drop(&mut self) {
+-        let _ = std::mem::replace(&mut self.webm, None).map_or(false, |webm| webm.finalize(None));
+-        let mut state = RecordState::WriteTail;
+-        if !self.written || self.start.elapsed().as_secs() < MIN_SECS {
+-            std::fs::remove_file(&self.ctx2.filename).ok();
+-            state = RecordState::RemoveFile;
+-        }
+-        self.ctx.tx.as_ref().map(|tx| tx.send(state));
+-    }
+-}
+-
+ #[cfg(feature = "hwcodec")]
+ struct HwRecorder {
+     muxer: Option<Muxer>,
+diff --git a/libs/scrap/src/common/vram.rs b/libs/scrap/src/common/vram.rs
+index b54e170c..9796f0e3 100644
+--- a/libs/scrap/src/common/vram.rs
++++ b/libs/scrap/src/common/vram.rs
+@@ -159,7 +159,6 @@ impl EncoderApi for VRamEncoder {
+             match self.format {
+                 DataFormat::H264 => vf.set_h264s(frames),
+                 DataFormat::H265 => vf.set_h265s(frames),
+-                DataFormat::AV1 => vf.set_av1s(frames),
+                 _ => bail!("{:?} not supported", self.format),
+             }
+             Ok(vf)
+@@ -245,7 +244,6 @@ impl VRamEncoder {
+         let data_format = match format {
+             CodecFormat::H264 => DataFormat::H264,
+             CodecFormat::H265 => DataFormat::H265,
+-            CodecFormat::AV1 => DataFormat::AV1,
+             _ => return vec![],
+         };
+         let v: Vec<_> = crate::hwcodec::HwCodecConfig::get()
+@@ -342,7 +340,6 @@ impl VRamDecoder {
+         let data_format = match format {
+             CodecFormat::H264 => DataFormat::H264,
+             CodecFormat::H265 => DataFormat::H265,
+-            CodecFormat::AV1 => DataFormat::AV1,
+             _ => return vec![],
+         };
+         crate::hwcodec::HwCodecConfig::get()
+@@ -359,8 +356,7 @@ impl VRamDecoder {
+         let v = crate::hwcodec::HwCodecConfig::get().vram_decode;
+         (
+             v.iter().any(|d| d.data_format == DataFormat::H264),
+-            v.iter()
+-                .any(|d| d.data_format == DataFormat::H265 || d.data_format == DataFormat::AV1),
++            v.iter().any(|d| d.data_format == DataFormat::H265),
+         )
+     }
+ 
+diff --git a/src/client/io_loop.rs b/src/client/io_loop.rs
+index 137265e4..ab07be2a 100644
+--- a/src/client/io_loop.rs
++++ b/src/client/io_loop.rs
+@@ -1190,7 +1190,7 @@ impl<T: InvokeUiSession> Remote<T> {
+         use video_frame::Union::*;
+         match &vf.union {
+             Some(vf) => match vf {
+-                Vp9s(f) | Av1s(f) | H264s(f) | H265s(f) => f.frames.iter().any(|e| e.key),
++                H264s(f) | H265s(f) => f.frames.iter().any(|e| e.key),
+                 _ => false,
+             },
+             None => false,
+diff --git a/src/rendezvous_mediator.rs b/src/rendezvous_mediator.rs
+index 5a662028..a4fb64ca 100644
+--- a/src/rendezvous_mediator.rs
++++ b/src/rendezvous_mediator.rs
+@@ -93,7 +93,6 @@ impl RendezvousMediator {
+         if crate::is_server() {
+             crate::platform::linux_desktop_manager::start_xdesktop();
+         }
+-        scrap::codec::test_av1();
+         loop {
+             let timeout = Arc::new(RwLock::new(CONNECT_TIMEOUT));
+             let conn_start_time = Instant::now();
+diff --git a/src/server/connection.rs b/src/server/connection.rs
+index 2222b663..cc8f342a 100644
+--- a/src/server/connection.rs
++++ b/src/server/connection.rs
+@@ -2068,10 +2068,10 @@ impl Connection {
+             if let Some(q) = o.supported_decoding.clone().take() {
+                 Encoder::update(Update(self.inner.id(), q));
+             } else {
+-                Encoder::update(NewOnlyVP9(self.inner.id()));
++                Encoder::update(Update(self.inner.id(), SupportedDecoding::new()));
+             }
+         } else {
+-            Encoder::update(NewOnlyVP9(self.inner.id()));
++            Encoder::update(Update(self.inner.id(), SupportedDecoding::new()));
+         }
+     }
+ 
+@@ -4596,13 +4596,11 @@ impl Connection {
+         let Some(usable) = usable else {
+             return;
+         };
+-        if usable.av1 != last.av1
+-            || usable.h264 != last.h264
++        if usable.h264 != last.h264
+             || usable.h265 != last.h265
+         {
+             let mut misc: Misc = Misc::new();
+             let supported_encoding = SupportedEncoding {
+-                av1: usable.av1,
+                 h264: usable.h264,
+                 h265: usable.h265,
+                 ..last.clone()
+diff --git a/src/server/video_service.rs b/src/server/video_service.rs
+index 3afa0442..4b1fbcd9 100644
+--- a/src/server/video_service.rs
++++ b/src/server/video_service.rs
+@@ -45,10 +45,8 @@ use scrap::vram::{VRamEncoder, VRamEncoderConfig};
+ #[cfg(not(windows))]
+ use scrap::Capturer;
+ use scrap::{
+-    aom::AomEncoderConfig,
+     codec::{Encoder, EncoderApi, EncoderCfg},
+     record::{Recorder, RecorderContext},
+-    vpxcodec::{VpxEncoderConfig, VpxVideoCodecId},
+     CodecFormat, Display, EncodeInput, TraitCapturer, TraitPixelBuffer,
+ };
+ #[cfg(windows)]
+@@ -648,24 +646,8 @@ fn run(vs: VideoService) -> ResultType<()> {
+     ) {
+         Ok(result) => result,
+         Err(err) => {
+-            log::error!("Failed to create encoder: {err:?}, fallback to VP9");
+-            Encoder::set_fallback(&EncoderCfg::VPX(VpxEncoderConfig {
+-                width: c.width as _,
+-                height: c.height as _,
+-                quality,
+-                codec: VpxVideoCodecId::VP9,
+-                keyframe_interval: None,
+-            }));
+-            setup_encoder(
+-                &c,
+-                sp.name(),
+-                quality,
+-                client_record,
+-                record_incoming,
+-                last_portable_service_running,
+-                vs.source,
+-                display_idx,
+-            )?
++            log::error!("Failed to create H264/H265 encoder: {err:?}");
++            return Err(err);
+         }
+     };
+     #[cfg(feature = "vram")]
+@@ -1332,34 +1314,9 @@ fn get_encoder_config(
+                     keyframe_interval,
+                 });
+             }
+-            EncoderCfg::VPX(VpxEncoderConfig {
+-                width: c.width as _,
+-                height: c.height as _,
+-                quality,
+-                codec: VpxVideoCodecId::VP9,
+-                keyframe_interval,
+-            })
++            panic!("No H264/H265 encoder path available for the current environment")
+         }
+-        CodecFormat::VP9 => EncoderCfg::VPX(VpxEncoderConfig {
+-            width: c.width as _,
+-            height: c.height as _,
+-            quality,
+-            codec: VpxVideoCodecId::VP9,
+-            keyframe_interval,
+-        }),
+-        CodecFormat::AV1 => EncoderCfg::AOM(AomEncoderConfig {
+-            width: c.width as _,
+-            height: c.height as _,
+-            quality,
+-            keyframe_interval,
+-        }),
+-        _ => EncoderCfg::VPX(VpxEncoderConfig {
+-            width: c.width as _,
+-            height: c.height as _,
+-            quality,
+-            codec: VpxVideoCodecId::VP9,
+-            keyframe_interval,
+-        }),
++        _ => panic!("Only H264/H265 are supported"),
+     }
+ }
+ 
+diff --git a/src/ui_session_interface.rs b/src/ui_session_interface.rs
+index 992d002f..b64031ac 100644
+--- a/src/ui_session_interface.rs
++++ b/src/ui_session_interface.rs
+@@ -523,13 +523,11 @@ impl<T: InvokeUiSession> Session<T> {
+             luid,
+             &mark_unsupported,
+         );
+-        let mut vp9 = decoder.ability_vp9 > 0;
+-        let mut av1 = false;
++        let vp9 = false;
++        let av1 = false;
+         let mut h264 = decoder.ability_h264 > 0;
+         let mut h265 = decoder.ability_h265 > 0;
+         let enc = &self.lc.read().unwrap().supported_encoding;
+-        vp9 = vp9 && true;
+-        av1 = av1 && enc.av1;
+         h264 = h264 && enc.h264;
+         h265 = h265 && enc.h265;
+         (vp9, av1, h264, h265)
